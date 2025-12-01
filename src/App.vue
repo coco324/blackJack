@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Cardcomponents from './components/cardComponents.vue'
 import { game } from './models/game.ts'
 
 const gameStarted = ref(false)
 const gameInstance = ref<game | null>(null)
 const playerCards = ref<Array<{ name: string; suit: string }>>([])
+const dealerCards = ref<Array<{ name: string; suit: string; faceUp: boolean; value?: number }>>([])
 
 function startGame() {
   // crée et démarre une partie
@@ -18,8 +19,32 @@ function startGame() {
     name: c.getNom(),   // utilise le getter
     suit: c.getSigne()
   }))
+  // mappe la main du croupier — première carte visible, autres face cachée
+  const d = gameInstance.value.getDealerMain() || []
+  dealerCards.value = d.map((c: any, index: number) => ({
+    name: c.getNom(),
+    suit: c.getSigne(),
+    value: c.getValue(),
+    faceUp: index === 0
+  }))
   gameStarted.value = true
+  // totalDealer placeholder removed (was causing errors)
 }
+
+const dealerScore = computed(() => {
+  // Somme des valeurs des cartes visibles du croupier
+  return dealerCards.value
+    .filter((c) => c.faceUp)
+    .reduce((sum, c) => sum + (c.value || 0), 0)
+})
+
+const playerScore = computed(() => {
+  // Somme des valeurs des cartes du joueur
+  return playerCards.value.reduce((sum, c) => {
+    const cardObj = gameInstance.value?.getPlayerMain().find((card: any) => card.getNom() === c.name && card.getSigne() === c.suit)
+    return sum + (cardObj ? cardObj.getValue() : 0)
+  }, 0)
+})
 </script>
 
 <template>
@@ -35,16 +60,34 @@ function startGame() {
 
     <!-- Zone de jeu du joueur -->
     <div v-else class="flex flex-col items-center gap-8 p-5">
-    
-      <div class="absolute left-1/2 -translate-x-1/2 bottom-20 flex gap-4 justify-center items-center">
-        <Cardcomponents
-          v-for="(card, index) in playerCards"
-          :key="index"
-          :value="card.name"
-          :suit="card.suit"
-          :faceUp="true"
-        />
+      <div class="absolute left-1/2 -translate-x-1/2 bottom-20 flex flex-col items-center gap-2">
+        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ playerScore }}</div>
+        <div class="flex gap-4 justify-center items-center">
+          <Cardcomponents
+            v-for="(card, index) in playerCards"
+            :key="index"
+            :value="card.name"
+            :suit="card.suit"
+            :faceUp="true"
+          />
+        </div>
       </div>
+
+      <!-- Zone du croupier -->
+      <div class="absolute left-1/2 -translate-x-1/2 top-12 flex flex-col items-center gap-3">
+        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ dealerScore }}</div>
+        <div class="flex gap-4 justify-center items-center">
+          <Cardcomponents
+            v-for="(card, index) in dealerCards"
+            :key="`dealer-${index}`"
+            :value="card.name"
+            :suit="card.suit"
+            :faceUp="card.faceUp"
+            backVariant="dots"
+          />
+        </div>
+      </div>
+       
 
       <button 
         class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"

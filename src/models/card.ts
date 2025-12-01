@@ -15,7 +15,7 @@ export class card {
     return this.name;
   }
 
-  public getValeur(): number {
+  public getValue(): number {
     return this.value;
   }
 
