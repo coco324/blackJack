@@ -9,11 +9,20 @@ export class pack {
   }
 
   public GetCard(): card {
-    const carte = this.listCart.pop();
+    let carte = this.listCart.pop();
     if (!carte) {
-      throw new Error("Le paquet est vide !");
+      console.log('melange du paquet');
+      // Pas de carte restante -> reconstitue et remélange le paquet
+      this.shuffle();
+      carte = this.listCart.pop();
     }
-    return carte;
+
+    if (!carte) {
+      // Cas extrêmement improbable : le paquet est vide après shuffle
+      throw new Error('Aucune carte disponible dans le paquet')
+    }
+
+    return carte
   }
 
   public hasCards(): boolean {
