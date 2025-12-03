@@ -7,32 +7,16 @@ const gameStarted = ref(false)
 const gameInstance = ref<game | null>(null)
 
 function startGame() {
-  gameInstance.value = new game()
-  gameInstance.value.startGame()
+  if (!gameInstance.value) {
+    gameInstance.value = new game()
+    gameInstance.value.startGame()
+  } else {
+    // reuse the same pack: reset only hands and redeal from the existing pack
+    gameInstance.value.resetRound()
+  }
   gameStarted.value = true
 }
 
-function hit() {
-  if (!gameInstance.value) return
-  try {
-    gameInstance.value.playerHit()
-  } catch (e) {
-    console.warn('Impossible de piocher une carte :', e)
-  }
-}
-
-const playerCards = computed(() => {
-  const p = gameInstance.value?.getPlayerMain() || []
-  return p.map((c: any) => ({ name: c.getNom(), suit: c.getSigne() }))
-})
-
-const dealerCards = computed(() => {
-  const d = gameInstance.value?.getDealerMain() || []
-  return d.map((c: any, index: number) => ({ name: c.getNom(), suit: c.getSigne(), value: c.getValue(), faceUp: index === 0 }))
-})
-
-const playerScore = computed(() => gameInstance.value ? gameInstance.value.getPlayerScore() : 0)
-const dealerScore = computed(() => gameInstance.value ? gameInstance.value.getDealerScore(true) : 0)
 </script>
 
 <template>
@@ -49,18 +33,29 @@ const dealerScore = computed(() => gameInstance.value ? gameInstance.value.getDe
     <!-- Zone de jeu du joueur -->
     <div v-else class="flex flex-col items-center gap-8 p-5">
       <div class="absolute left-1/2 -translate-x-1/2 bottom-20 flex flex-col items-center gap-2">
-        <div class="mb-2">
+        <div class="mb-2 p-4 bg-green-800/50 rounded-lg flex gap-4">
           <button
+            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="hit"
+            @click="gameInstance?.playerStand()"
+          >
+            Stand
+          </button>
+          <button
+            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
+            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+            @click="gameInstance?.playerHit()"
           >
             Hit
           </button>
         </div>
-        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ playerScore }}</div>
+        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ gameInstance?.getPlayerScore() }}</div>
+        <div v-if="gameInstance && (gameInstance.getPlayerStatus() === 'win' || gameInstance.getPlayerStatus() === 'loose' || gameInstance.getPlayerStatus() === 'push')" class="mt-2 text-xl font-bold text-yellow-300">
+          {{ gameInstance.getPlayerStatus() === 'win' ? 'Vous avez gagné !' : gameInstance.getPlayerStatus() === 'loose' ? 'Vous avez perdu !' : "Égalité !" }}
+        </div>
         <div class="flex gap-4 justify-center items-center">
           <Cardcomponents
-            v-for="(card, index) in playerCards"
+            v-for="(card, index) in gameInstance?.getPlayerMain()"
             :key="index"
             :value="card.name"
             :suit="card.suit"
@@ -71,14 +66,14 @@ const dealerScore = computed(() => gameInstance.value ? gameInstance.value.getDe
 
       <!-- Zone du croupier -->
       <div class="absolute left-1/2 -translate-x-1/2 top-12 flex flex-col items-center gap-3">
-        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ dealerScore }}</div>
+        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ gameInstance?.getDealerScore() }}</div>
         <div class="flex gap-4 justify-center items-center">
           <Cardcomponents
-            v-for="(card, index) in dealerCards"
+            v-for="(card, index) in gameInstance?.getDealerMain()"
             :key="`dealer-${index}`"
             :value="card.name"
             :suit="card.suit"
-            :faceUp="card.faceUp"
+            :faceUp="card.isFaceUp"
             backVariant="dots"
           />
         </div>

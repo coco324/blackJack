@@ -4,12 +4,16 @@ export class card {
   public readonly name: string;
   public readonly value: number;
   public readonly suit: string;
+  // `isFaceUp` doit pouvoir changer (on retourne la carte), donc non readonly
+  public isFaceUp: boolean;
 
-  constructor(name: string, value: number, suit: string) {
+  constructor(name: string, value: number, suit: string, isFaceUp: boolean = true) {
     this.name = name;
     this.value = value;
     this.suit = suit;
+    this.isFaceUp = isFaceUp;
   }
+
 
   public getNom(): string {
     return this.name;
@@ -21,6 +25,14 @@ export class card {
 
   public getSigne(): string {
     return this.suit;
+  }
+
+  public getIsFaceUp(): boolean {
+    return this.isFaceUp;
+  }
+
+  public flipCard(): void {
+    this.isFaceUp = !this.isFaceUp;
   }
 }
 
