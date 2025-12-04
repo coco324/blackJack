@@ -67,6 +67,9 @@ export class game{
         this.player.addCarte(c)
         if (this.player.getscore() > 21) {
             this.player.setStatus('loose');
+            for (const c of this.dealer.getMain()) {
+            c.isFaceUp = true;
+        }
         }
         if (this.player.getscore() === 21) {
             this.playerStand();
