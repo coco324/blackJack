@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import Cardcomponents from './components/cardComponents.vue'
 import { game } from './models/game'
 
@@ -48,19 +48,34 @@ function startGame() {
           >
             Hit
           </button>
+          <button
+            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && gameInstance.canSplit()"
+            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+            @click="gameInstance?.playerSplit()"
+          >
+            Split
+          </button>
         </div>
-        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ gameInstance?.getPlayerScore() }}</div>
-        <div v-if="gameInstance && (gameInstance.getPlayerStatus() === 'win' || gameInstance.getPlayerStatus() === 'loose' || gameInstance.getPlayerStatus() === 'push')" class="mt-2 text-xl font-bold text-yellow-300">
-          {{ gameInstance.getPlayerStatus() === 'win' ? 'Vous avez gagné !' : gameInstance.getPlayerStatus() === 'loose' ? 'Vous avez perdu !' : "Égalité !" }}
-        </div>
-        <div class="flex gap-4 justify-center items-center">
-          <Cardcomponents
-            v-for="(card, index) in gameInstance?.getPlayerMain()"
-            :key="index"
-            :value="card.name"
-            :suit="card.suit"
-            :faceUp="true"
-          />
+        <div class="flex space-x-10 justify-center items-start">
+            <div v-for="(hand, pIndex) in gameInstance?.getPlayersMain()" :key="pIndex" class="flex flex-col gap-2 items-center">
+                <div class="text-white/90 uppercase tracking-wider text-sm font-bold">
+                  Score : {{ gameInstance?.getPlayerScoreByIndex(pIndex) }}
+                </div>
+                
+                <div class="flex gap-4 justify-center">
+                    <Cardcomponents
+                        v-for="(card, index) in hand"
+                        :key="'hand-' + pIndex + '-card-' + index"
+                        :value="card.name"
+                        :suit="card.suit"
+                        :faceUp="true"
+                    />
+                </div>
+
+                <div v-if="gameInstance && (gameInstance.getPlayerStatusByIndex(pIndex) === 'win' || gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' || gameInstance.getPlayerStatusByIndex(pIndex) === 'push')" class="mt-2 text-lg font-bold text-yellow-300">
+                  {{ gameInstance.getPlayerStatusByIndex(pIndex) === 'win' ? 'Gagné !' : gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' ? 'Perdu !' : "Égalité !" }}
+                </div>
+            </div>
         </div>
       </div>
 
