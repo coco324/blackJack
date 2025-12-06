@@ -39,4 +39,11 @@ export class player{
     public setStatus(newStatus: 'start' | 'win' | 'loose' | 'push' | 'stop'): void {
         this.status = newStatus;
     }
+
+
+    public removecard(index: number): void {
+        if (index >= 0 && index < this.main.length) {
+            this.main.splice(index, 1);
+        }
+    }
 }
