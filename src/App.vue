@@ -56,18 +56,26 @@ function startGame() {
             Split
           </button>
         </div>
-        <div class="text-white/90 uppercase tracking-wider text-sm">Score : {{ gameInstance?.getPlayerScore() }}</div>
-        <div v-if="gameInstance && (gameInstance.getPlayerStatus() === 'win' || gameInstance.getPlayerStatus() === 'loose' || gameInstance.getPlayerStatus() === 'push')" class="mt-2 text-xl font-bold text-yellow-300">
-          {{ gameInstance.getPlayerStatus() === 'win' ? 'Vous avez gagné !' : gameInstance.getPlayerStatus() === 'loose' ? 'Vous avez perdu !' : "Égalité !" }}
-        </div>
-        <div class="flex gap-4 justify-center items-center">
-          <Cardcomponents
-            v-for="(card, index) in gameInstance?.getPlayerMain()"
-            :key="index"
-            :value="card.name"
-            :suit="card.suit"
-            :faceUp="true"
-          />
+        <div class="flex space-x-10 justify-center items-start">
+            <div v-for="(hand, pIndex) in gameInstance?.getPlayersMain()" :key="pIndex" class="flex flex-col gap-2 items-center">
+                <div class="text-white/90 uppercase tracking-wider text-sm font-bold">
+                  Score : {{ gameInstance?.getPlayerScoreByIndex(pIndex) }}
+                </div>
+                
+                <div class="flex gap-4 justify-center">
+                    <Cardcomponents
+                        v-for="(card, index) in hand"
+                        :key="'hand-' + pIndex + '-card-' + index"
+                        :value="card.name"
+                        :suit="card.suit"
+                        :faceUp="true"
+                    />
+                </div>
+
+                <div v-if="gameInstance && (gameInstance.getPlayerStatusByIndex(pIndex) === 'win' || gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' || gameInstance.getPlayerStatusByIndex(pIndex) === 'push')" class="mt-2 text-lg font-bold text-yellow-300">
+                  {{ gameInstance.getPlayerStatusByIndex(pIndex) === 'win' ? 'Gagné !' : gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' ? 'Perdu !' : "Égalité !" }}
+                </div>
+            </div>
         </div>
       </div>
 

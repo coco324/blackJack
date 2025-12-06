@@ -32,6 +32,8 @@ export class player{
         return score;
     }
 
+    
+
     public getStatus(): 'start' | 'win' | 'loose' | 'push' | 'stop' {
         return this.status;
     }

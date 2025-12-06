@@ -8,6 +8,7 @@ export class game{
     private player: player[] = [new player()]
     private dealer: dealer
     private pack: pack
+    private currentHandIndex: number = 0
 
     public constructor(){
         this.dealer = new dealer()
@@ -16,9 +17,42 @@ export class game{
 
     // Retourne le joueur courant en garantissant qu'il existe
     private getCurrentPlayer(): player {
-        const p = this.player[0]
+        const p = this.player[this.currentHandIndex]
         if (!p) throw new Error('Player not initialized')
         return p
+    }
+
+    // Retourne l'index de la main active
+    public getCurrentHandIndex(): number {
+        return this.currentHandIndex
+    }
+
+    // Passe à la main suivante après avoir fini de jouer la main courante
+    public nextHand(): void {
+        if (this.currentHandIndex < this.player.length - 1) {
+            this.currentHandIndex++
+        } else {
+            // Toutes les mains ont été jouées, on passe au dealer
+            this.playDealer()
+        }
+    }
+
+    // Vérifie si toutes les mains ont été jouées
+    public allHandsPlayed(): boolean {
+        return this.player.every(p => p.getStatus() !== 'start')
+    }
+
+    private playDealer(): void {
+        // Dealer reveals hidden card
+        for (const c of this.dealer.getMain()) {
+            c.isFaceUp = true
+        }
+
+        while (this.dealer.getscore() < 17) {
+            const c = this.pack.GetCard()
+            this.dealer.addCarte(c)
+        }
+        this.evaluateAll()
     }
 
     public startGame(): void {
@@ -56,6 +90,7 @@ export class game{
             // replace player and dealer with fresh ones but keep the same pack
             this.player = [new player()]
             this.dealer = new dealer()
+            this.currentHandIndex = 0
             // startGame will deal from the existing pack
             this.startGame()
         }
@@ -91,11 +126,10 @@ export class game{
         current.addCarte(c)
         if (current.getscore() > 21) {
             current.setStatus('loose')
-            for (const d of this.dealer.getMain()) {
-                d.isFaceUp = true
-            }
+            // Passe à la main suivante si bust
+            this.nextHand()
         }
-        if (current.getscore() === 21) {
+        else if (current.getscore() === 21) {
             this.playerStand()
         }
         return c
@@ -103,16 +137,8 @@ export class game{
 
     public playerStand(): void {
         this.getCurrentPlayer().setStatus('stop')
-        // Dealer reveals hidden card
-        for (const c of this.dealer.getMain()) {
-            c.isFaceUp = true;
-        }
-
-        while (this.dealer.getscore() < 17) {
-            const c = this.pack.GetCard();
-            this.dealer.addCarte(c);
-        }
-        this.evaluate();
+        // Passe à la main suivante ou joue le dealer
+        this.nextHand()
     }
 
     public playerSplit(): void {
@@ -157,9 +183,21 @@ export class game{
         return this.getCurrentPlayer().getscore()
     }
 
+    public getPlayerScoreByIndex(index: number): number {
+        const p = this.player[index]
+        if (!p) throw new Error('Player not found')
+        return p.getscore()
+    }
+
     // Retourne le statut du joueur
     public getPlayerStatus(): 'start' | 'win' | 'loose' | 'push' | 'stop' {
         return this.getCurrentPlayer().getStatus()
+    }
+
+    public getPlayerStatusByIndex(index: number): 'start' | 'win' | 'loose' | 'push' | 'stop' {
+        const p = this.player[index]
+        if (!p) throw new Error('Player not found')
+        return p.getStatus()
     }
 
     // Calcul du score du dealer — si visibleOnly est true, ne compte que la première carte
@@ -182,6 +220,27 @@ export class game{
             current.setStatus('loose')
         } else {
             current.setStatus('push')
+        }
+    }
+
+    // Évalue toutes les mains contre le dealer
+    private evaluateAll(): void {
+        const dealerScore = this.getDealerScore()
+        
+        for (const p of this.player) {
+            const playerScore = p.getscore()
+            
+            if (playerScore > 21) {
+                p.setStatus('loose')
+            } else if (dealerScore > 21) {
+                p.setStatus('win')
+            } else if (playerScore > dealerScore) {
+                p.setStatus('win')
+            } else if (playerScore < dealerScore) {
+                p.setStatus('loose')
+            } else {
+                p.setStatus('push')
+            }
         }
     }
 
