@@ -57,7 +57,12 @@ function startGame() {
           </button>
         </div>
         <div class="flex space-x-10 justify-center items-start">
-            <div v-for="(hand, pIndex) in gameInstance?.getPlayersMain()" :key="pIndex" class="flex flex-col gap-2 items-center">
+            <div 
+              v-for="(hand, pIndex) in gameInstance?.getPlayersMain()" 
+              :key="pIndex" 
+              class="flex flex-col gap-2 items-center transition-all duration-300"
+              :class="gameInstance?.getCurrentHandIndex() === pIndex ? 'opacity-100 scale-105' : 'opacity-60 scale-95 brightness-75'"
+            >
                 <div class="text-white/90 uppercase tracking-wider text-sm font-bold">
                   Score : {{ gameInstance?.getPlayerScoreByIndex(pIndex) }}
                 </div>
