@@ -3,13 +3,48 @@ import backgroundImage from '../assets/ImageBackgoundHome.png'
 import trophyComponent from '../components/logoComponents/trophyComponent.vue';
 import statComponent from '../components/logoComponents/statComponent.vue';
 import medalComponent from '../components/logoComponents/medalComponent.vue';
+import UserServices from '../Services/UserServices';
+import { ref, onMounted } from 'vue';
+
+const isLoggedIn = ref(false);
+const user = ref(null);
+
+// 1. Vérification automatique au chargement
+onMounted(async () => {
+  await checkAuth();
+});
+
+// 2. Fonction de Login
+async function fakeLogin() {
+  const res = await UserServices.Login('a@a.com', 'aA1&zz');
+  console.log("Réponse Login:", res);
+  
+  if (res.user) { // Si le backend renvoie l'objet user
+    isLoggedIn.value = true;
+    user.value = res.user;
+  }
+}
+
+// 3. Fonction de vérification de session
+async function checkAuth() {
+  const res = await UserServices.CheckAuth();
+  console.log("Réponse CheckAuth:", res);
+  
+  if (res.isConnected) {
+    isLoggedIn.value = true;
+    user.value = res.user;
+  } else {
+    isLoggedIn.value = false;
+    user.value = null;
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="absolute top-6 right-6 flex gap-4 p-2 ">
-      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600">Se connecter</button>
-      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600">S'inscrire</button>
+      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600 " @click="fakeLogin()">Se connecter</button>
+      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="checkAuth()">S'inscrire</button>
     </div>
 
 
