@@ -111,3 +111,17 @@ export async function Logout(req, res) {
   });
 };
 
+
+
+export async function CheckAuth(req, res) {
+  if (req.session.user) {
+    // Si la session existe, on renvoie les infos de l'utilisateur
+    return res.json({ 
+      isConnected: true, 
+      user: req.session.user 
+    });
+  } else {
+    // Sinon, on dit qu'il n'est pas connecté (sans erreur 500)
+    return res.json({ isConnected: false });
+  }
+}

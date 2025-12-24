@@ -3,6 +3,7 @@ import { card } from './card'
 export class hand {
     private cards: card[] = []
     private status: 'start' | 'win' | 'loose' | 'push' | 'stop' = 'start'
+    private bet: number = 0 
 
     public getCards(): card[] {
         return this.cards

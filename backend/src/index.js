@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import session from "express-session";
 import connection from "./config/bd_cnx.js";
-import { CreateUser,Login,Logout } from "./controller/user.controller.js";
+import { CreateUser,Login,Logout,CheckAuth } from "./controller/user.controller.js";
 
 dotenv.config();
 
@@ -23,6 +23,7 @@ app.use(
 
 // --- Routes ---
 
+app.get('/checkAuth', CheckAuth);
 app.post("/CreateUser", CreateUser);
 app.post("/Login", Login);
 app.post("/Logout", Logout);
