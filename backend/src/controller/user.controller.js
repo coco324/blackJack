@@ -45,6 +45,7 @@ export async function CreateUser(req, res) {
 
     // Stocke les infos dans la session (pas le mot de passe)
     req.session.user = {
+      id: userRow.id,
       mail: userRow.mail,
       username: userRow.username,
       solde : userRow.solde,
@@ -88,6 +89,7 @@ export async function Login(req, res) {
 
     // Stocke les infos dans la session (jamais le mot de passe)
     req.session.user = {
+      id: userRow.id,
       mail: userRow.mail,
       username: userRow.username,
       description: userRow.description

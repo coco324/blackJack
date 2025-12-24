@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import session from "express-session";
 import connection from "./config/bd_cnx.js";
 import { CreateUser,Login,Logout,CheckAuth } from "./controller/user.controller.js";
+import { CreateSession, SaveGame, EndSession, GetUserSessions } from "./controller/game.controller.js";
+
 
 dotenv.config();
 
@@ -38,6 +40,12 @@ app.get("/", async (req, res) => {
     res.status(500).send("Erreur serveur");
   }
 });
+
+// game routes
+app.post("/CreateSession", CreateSession);
+app.post("/SaveGame", SaveGame);
+app.post("/EndSession", EndSession);
+app.get("/GetUserSessions", GetUserSessions);
 
 // --- Démarrage du serveur (À LA FIN) ---
 app.listen(PORT, () => {
