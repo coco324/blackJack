@@ -2,18 +2,120 @@ import { dealer } from "./dealer";
 import { pack } from "./pack";
 import { player } from "./player";
 import { card } from "./card";
+import GameServices from "../Services/GameServices";
 
 export class game{
 
     private player: player
     private dealer: dealer
     private pack: pack
+    private sessionId?: number
+    private gameId?: number
+    private currentBet: number = 10
 
-    public constructor(){
+    public constructor(sessionId?: number){
         this.player = new player()
         this.dealer = new dealer()
         this.pack = new pack()
+        this.sessionId = sessionId
     }
+
+    public setBet(amount: number): void {
+        this.currentBet = amount
+    }
+
+    // ✅ Récupérer la mise
+    public getBet(): number {
+        return this.currentBet
+    }
+
+    public setSessionId(sessionId: number): void {
+        this.sessionId = sessionId
+    }
+
+    public getSessionId(): number | undefined {
+        return this.sessionId
+    }
+
+    public getGameId(): number | undefined {
+        return this.gameId
+    }
+
+    public calculateWinnings(): number {
+        let totalWinnings = 0
+        
+        for (const hand of this.player.getHands()) {
+            const status = hand.getStatus()
+            
+            if (status === 'win') {
+                // Vérifier si c'est un blackjack naturel
+                if (hand.getscore() === 21 && hand.getCards().length === 2) {
+                    totalWinnings += this.currentBet * 2.5 // Blackjack paie 3:2 (mise + gain)
+                } else {
+                    totalWinnings += this.currentBet * 2 // Victoire normale (mise + gain)
+                }
+            } else if (status === 'push') {
+                totalWinnings += this.currentBet // Récupère juste la mise
+            }
+            // Si loose, on ne récupère rien (mise déjà déduite)
+        }
+        
+        return totalWinnings
+    }
+
+    //#region [Database Interaction]
+    // ✅ Construire les données des mains pour la sauvegarde
+    private buildHandsData() {
+        const hands = []
+        
+        // Mains du joueur
+        for (let i = 0; i < this.player.getHands().length; i++) {
+            const hand = this.player.getHandByIndex(i)
+            hands.push({
+                playerType: 'player',
+                index: i,
+                bet: this.currentBet,
+                status: hand.getStatus(),
+                score: hand.getscore()
+            })
+        }
+
+        // Main du dealer
+        hands.push({
+            playerType: 'dealer',
+            index: 0,
+            bet: 0,
+            status: this.dealer.getscore() > 21 ? 'loose' : 'stop',
+            score: this.dealer.getscore()
+        })
+
+        return hands
+    }
+
+    // ✅ Sauvegarder la partie en base de données
+    private async saveGameToDatabase(): Promise<void> {
+        if (!this.sessionId) {
+            console.warn('⚠️ Pas de sessionId, partie non sauvegardée')
+            return
+        }
+
+        try {
+            const result = await GameServices.SaveGame(
+                this.sessionId,
+                this.getDealerScore(),
+                this.buildHandsData()
+            )
+
+            if (result?.gameId) {
+                this.gameId = result.gameId
+                console.log('✅ Partie sauvegardée, gameId:', this.gameId)
+            }
+        } catch (error) {
+            console.error('❌ Erreur lors de la sauvegarde de la partie:', error)
+        }
+    }
+    //#endregion
+
 
     public canSplit(): boolean {
         const currentHand = this.player.getCurrentHand()
@@ -44,7 +146,7 @@ export class game{
         return this.player.getHands().every(h => h.getStatus() !== 'start')
     }
 
-    private playDealer(): void {
+    private async playDealer(): Promise<void> {
         // Dealer reveals hidden card
         for (const c of this.dealer.getMain()) {
             c.isFaceUp = true
@@ -55,6 +157,7 @@ export class game{
             this.dealer.addCarte(c)
         }
         this.evaluateAll()
+        await this.saveGameToDatabase()
     }
 
     public startGame(): void {
