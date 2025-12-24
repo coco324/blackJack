@@ -5,6 +5,7 @@ import statComponent from '../components/logoComponents/statComponent.vue';
 import medalComponent from '../components/logoComponents/medalComponent.vue';
 import UserServices from '../Services/UserServices';
 import { ref, onMounted } from 'vue';
+import router from '../router';
 
 const isLoggedIn = ref(false);
 const user = ref(null);
@@ -38,6 +39,10 @@ async function checkAuth() {
     user.value = null;
   }
 }
+
+async function game() {
+  router.push('/game');
+}
 </script>
 
 <template>
@@ -55,7 +60,7 @@ async function checkAuth() {
 
 
       <div class="border border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-2 gap-4 mb-8 m-4 w-full ">
-        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800">Jouer en invité</button>
+        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800" @click="game()">Jouer en invité</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">Régle du jeu</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">In comming ....</button>
       </div>
