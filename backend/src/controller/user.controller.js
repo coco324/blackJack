@@ -92,7 +92,8 @@ export async function Login(req, res) {
       id: userRow.id,
       mail: userRow.mail,
       username: userRow.username,
-      description: userRow.description
+      description: userRow.description,
+      solde: userRow.solde,
     };
 
     return res.json({
@@ -125,5 +126,26 @@ export async function CheckAuth(req, res) {
   } else {
     // Sinon, on dit qu'il n'est pas connecté (sans erreur 500)
     return res.json({ isConnected: false });
+  }
+}
+
+export async function GetUserStats(req, res) {
+  const userId = req.session?.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Non authentifié' });
+  }
+
+  try {
+    const [result] = await connection.execute(
+      'CALL GetUserStats(?)',
+      [userId]
+    );
+
+    const stats = result[0][0];
+    return res.json(stats);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
   }
 }

@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import session from "express-session";
 import connection from "./config/bd_cnx.js";
-import { CreateUser,Login,Logout,CheckAuth } from "./controller/user.controller.js";
+import { CreateUser,Login,Logout,CheckAuth,GetUserStats } from "./controller/user.controller.js";
 import { CreateSession, SaveGame, EndSession, GetUserSessions } from "./controller/game.controller.js";
 
 
@@ -29,6 +29,7 @@ app.get('/checkAuth', CheckAuth);
 app.post("/CreateUser", CreateUser);
 app.post("/Login", Login);
 app.post("/Logout", Logout);
+app.get("/GetUserStats", GetUserStats);
 app.get("/", async (req, res) => {
   try {
     const [rows] = await connection.execute("SELECT * FROM User");

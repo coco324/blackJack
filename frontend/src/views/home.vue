@@ -9,10 +9,13 @@ import router from '../router';
 
 const isLoggedIn = ref(false);
 const user = ref(null);
+const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 
 // 1. Vérification automatique au chargement
 onMounted(async () => {
   await checkAuth();
+  if (isLoggedIn.value) {
+  }
 });
 
 // 2. Fonction de Login
@@ -25,8 +28,11 @@ async function fakeLogin() {
     user.value = res.user;
   }
 }
-async function logout() {
+async function Logout() {
   UserServices.Logout();
+  isLoggedIn.value = false;
+  user.value = null;
+  stats.value = { victoires: 0, parties: 0, taux: 0 };
 }
 // 3. Fonction de vérification de session
 async function checkAuth() {
@@ -42,6 +48,17 @@ async function checkAuth() {
   }
 }
 
+async function loadStats() {
+  const res = await UserServices.GetUserStats();
+  if (res && !res.error) {
+    stats.value = {
+      victoires: res.victoires || 0,
+      parties: res.parties || 0,
+      taux: res.taux || 0
+    };
+  }
+}
+
 async function game() {
   router.push('/game');
 }
@@ -49,26 +66,42 @@ async function game() {
 
 <template>
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
-    <div class="absolute top-6 right-6 flex gap-4 p-2 ">
-      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600 " @click="fakeLogin()">Se connecter</button>
-      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="logout()">S'inscrire</button>
+    <div v-if="!isLoggedIn" class="absolute top-6 right-6 flex gap-4 p-2 ">
+      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="fakeLogin()">Se connecter</button>
+      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="">S'inscrire</button>
     </div>
+    <div v-if="isLoggedIn" class="absolute top-6 right-6 flex gap-4 p-2 ">
+      <div class="absolute top-6 right-6 z-50 group">
+        <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
+          <div class="w-8 h-8 rounded-full bg-[#0a263d] flex items-center justify-center border-2 border-yellow-500">
+            <span class="text-yellow-500 font-bold">{{ user?.username.charAt(0).toUpperCase() }}</span>
+          </div>
+          <p class="text-white font-bold mr-2">{{ user?.username }}</p>
+        <div class="px-4 py-2 text-center min-w-[120px]">
+          <p class="text-[10px] text-gray-500 uppercase font-black leading-none mb-1">Solde</p>
+          <p class="text-yellow-400 font-black flex items-center justify-center gap-1 text-[15px]">
+            {{ user?.solde }}
+            <span class="text-[15px] opacity-70">€</span>
+          </p>
+        </div>
+        <button class="rounded-lg text-white hover:text-gray-400" @click="Logout()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
 
-
-
+    </div>
+    </div>
+  </div>
     <div class="size-200 flex flex-col items-center">
       <h1 class="p-6 pt-26 bg-gradient-to-r from-yellow-500 via-yellow-200 to-yellow-500 bg-clip-text text-transparent font-bold text-6xl ">BLACKJACK</h1>
       <h2 class="text-yellow-100 pb-6 text-lg font-bold">Tentez votre chance et battez le croupier !</h2>
 
 
-      <div class="border border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-2 gap-4 mb-8 m-4 w-full ">
-        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800" @click="game()">Jouer en invité</button>
+      <div class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-2 gap-4 mb-8 m-4 w-full ">
+        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800" @click="game()">{{ user ? 'Jouer' : 'Jouer en invité' }}</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">Régle du jeu</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">In comming ....</button>
       </div>
 
       
-      <div class="w-full max-w-4xl mx-auto p-8 rounded-2xl bg-[#062c2c]/80 border border-white/5 backdrop-blur-md">
+      <div v-if="!isLoggedIn" class="w-full max-w-4xl mx-auto p-8 rounded-2xl bg-[#062c2c]/80 border border-white/5 backdrop-blur-md">
         <h3 class="text-[#00e699] text-center font-medium mb-10 text-lg">
           Connectez-vous pour débloquer plus de fonctionnalités !
         </h3>
@@ -101,10 +134,29 @@ async function game() {
             Succes & récompenses
           </span>
         </div>
+
+        </div>
+      </div>
+
+      <!-- statistiques si connecté -->
+      <div v-if="isLoggedIn" class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-3 gap-4 m-4 w-full">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+          <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.victoires }}</p>
+          <p class="text-gray-300 text-sm font-semibold">Victoires</p>
+        </div>
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+          <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.parties }}</p>
+          <p class="text-gray-300 text-sm font-semibold">Parties</p>
+        </div>
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+          <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.taux }}%</p>
+          <p class="text-gray-300 text-sm font-semibold">Taux</p>
+        </div>
+      </div>
+
     </div>
   </div>
-  </div>
-  </div>
+  
         
 
 </template>
