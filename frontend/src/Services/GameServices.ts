@@ -1,11 +1,11 @@
 export default class GameServices {
     // Créer une nouvelle session de jeu
-    static async CreateSession(): Promise<{ sessionId: number, startSolde: number } | null> {
+    static async CreateSession(userId: number): Promise<{ sessionId: number, startSolde: number } | null> {
         try {
             const response = await fetch('/api/CreateSession', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
+                body: JSON.stringify({ userId}),
             });
             
             if (!response.ok) {

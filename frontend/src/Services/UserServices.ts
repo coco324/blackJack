@@ -6,7 +6,6 @@ export default class UserServices {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include',
                 body: JSON.stringify({ mail, password, username }),
             });
             return await response.json();
@@ -21,7 +20,6 @@ export default class UserServices {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include',
                 body: JSON.stringify({ mail, password }),
             });
             return await response.json();
@@ -36,7 +34,6 @@ export default class UserServices {
                 headers: {
                     'Content-Type': 'application/json', 
                 },
-                credentials: 'include',
             });
             return await response.json();
         } catch (error : any) {
@@ -51,7 +48,6 @@ export default class UserServices {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include'
             });
             return await response.json();
         } catch (error: any) {
