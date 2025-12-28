@@ -25,7 +25,9 @@ async function fakeLogin() {
     user.value = res.user;
   }
 }
-
+async function logout() {
+  UserServices.Logout();
+}
 // 3. Fonction de vérification de session
 async function checkAuth() {
   const res = await UserServices.CheckAuth();
@@ -49,7 +51,7 @@ async function game() {
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="absolute top-6 right-6 flex gap-4 p-2 ">
       <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600 " @click="fakeLogin()">Se connecter</button>
-      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="checkAuth()">S'inscrire</button>
+      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="logout()">S'inscrire</button>
     </div>
 
 

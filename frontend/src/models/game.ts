@@ -95,7 +95,7 @@ export class game{
     // ✅ Sauvegarder la partie en base de données
     private async saveGameToDatabase(): Promise<void> {
         if (!this.sessionId) {
-            console.warn('⚠️ Pas de sessionId, partie non sauvegardée')
+            console.log('Pas de sessionId, partie non sauvegardée')
             return
         }
 

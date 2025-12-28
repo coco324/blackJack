@@ -4,8 +4,11 @@ import { useRouter } from 'vue-router'
 import Cardcomponents from '../components/cardComponents.vue'
 import { game } from '../models/game.ts'
 import GameServices from '../Services/GameServices'
+import UserServices from '../Services/UserServices.ts'
 
 const router = useRouter()
+const user = ref(null);
+const isLoggedIn = ref(false);
 const gameStarted = ref(false)
 const gameInstance = ref<game | null>(null)
 const sessionId = ref<number | null>(null)
@@ -14,16 +17,36 @@ const currentBet = ref(10)
 const showBetSelection = ref(false)
 
 onMounted(async () => {
-  console.log('📍 Création de la session...')
-  const sessionData = await GameServices.CreateSession()
-  
-  if (sessionData) {
-    sessionId.value = sessionData.sessionId
-    currentSolde.value = sessionData.startSolde
-    console.log('✅ Session créée:', sessionId.value, 'Solde:', currentSolde.value)
-  } else {
-    alert('❌ Erreur: impossible de créer une session')
-    router.push('/')
+  try {
+    const authRes = await UserServices.CheckAuth()
+    
+    // On vérifie la connexion ET l'existence de l'objet user
+    if (!authRes.isConnected || !authRes.user) {
+      user.value = null
+      isLoggedIn.value = false
+      return 
+    }
+    else {
+      isLoggedIn.value = true
+    
+      // On crée une constante locale : TypeScript "valide" son existence ici
+      const currentUser = authRes.user
+      user.value = currentUser
+
+      console.log('✅ Utilisateur identifié:', currentUser.username)
+      console.log('📍 Création de la session...')
+      
+      
+      const sessionData = await GameServices.CreateSession(currentUser.id)
+
+      if (sessionData) {
+        sessionId.value = sessionData.sessionId
+        currentSolde.value = sessionData.startSolde
+      }
+  }
+
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation:', error)
   }
 })
 
@@ -42,28 +65,25 @@ function selectBet(amount: number) {
 }
 
 function startGame() {
-  if (!sessionId.value) {
-    alert('❌ Erreur: pas de session active')
-    return
-  }
-
+  // On ne bloque plus si sessionId est null, on vérifie juste le solde
   if (currentBet.value > currentSolde.value) {
     alert('Solde insuffisant !')
     return
   }
 
-  // ✅ Déduire la mise du solde au moment de la mise
+  // Déduire la mise du solde local
   currentSolde.value -= currentBet.value
 
+  // On crée l'instance. Si sessionId est null, on passe 0 ou null.
+  const id = sessionId.value || 0 
+
   if (!gameInstance.value) {
-    gameInstance.value = new game(sessionId.value)
+    gameInstance.value = new game(id)
     gameInstance.value.setBet(currentBet.value)
     gameInstance.value.startGame()
-    console.log('🎮 Nouvelle partie, mise:', currentBet.value, 'Nouveau solde:', currentSolde.value)
   } else {
     gameInstance.value.resetRound()
     gameInstance.value.setBet(currentBet.value)
-    console.log('🔄 Nouvelle manche, mise:', currentBet.value, 'Nouveau solde:', currentSolde.value)
   }
   
   gameStarted.value = true
@@ -90,11 +110,16 @@ async function newRound() {
 }
 
 async function endSession() {
-  if (sessionId.value) {
-    console.log('🛑 Fin de session:', sessionId.value, 'Solde final:', currentSolde.value)
-    await GameServices.EndSession(sessionId.value, currentSolde.value)
-    router.push('/')
-  }
+  // On vérifie que sessionId existe ET n'est pas 0
+if (sessionId.value && sessionId.value !== 0) {
+  console.log('🛑 Fin de session enregistrée:', sessionId.value, 'Solde:', currentSolde.value)
+  await GameServices.EndSession(sessionId.value, currentSolde.value)
+} else {
+  console.log('👋 Fin de partie Invité (non enregistré)')
+}
+
+// Dans tous les cas, on redirige vers l'accueil
+router.push('/')
 }
 </script>
 
