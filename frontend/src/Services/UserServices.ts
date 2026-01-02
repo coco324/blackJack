@@ -54,5 +54,24 @@ export default class UserServices {
             return { isConnected: false, error };
         }
     }
+
+    static async GetUserStats() {
+        try {
+            const response = await fetch(`/api/GetUserStats`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch user stats');
+            }
+            
+            return await response.json();
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    }
     
 }

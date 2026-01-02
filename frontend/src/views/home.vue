@@ -11,10 +11,11 @@ const isLoggedIn = ref(false);
 const user = ref(null);
 const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 
-// 1. Vérification automatique au chargement
+// 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
   await checkAuth();
   if (isLoggedIn.value) {
+    await loadStats();
   }
 });
 
@@ -42,6 +43,7 @@ async function checkAuth() {
   if (res.isConnected) {
     isLoggedIn.value = true;
     user.value = res.user;
+    console.log(res.user);
   } else {
     isLoggedIn.value = false;
     user.value = null;
@@ -50,11 +52,12 @@ async function checkAuth() {
 
 async function loadStats() {
   const res = await UserServices.GetUserStats();
+  console.log(res);
   if (res && !res.error) {
     stats.value = {
-      victoires: res.victoires || 0,
-      parties: res.parties || 0,
-      taux: res.taux || 0
+      victoires: res.totalWins || 0,
+      parties: res.totalGames || 0,
+      taux: (res.totalWins / res.totalGames * 100).toFixed(1),
     };
   }
 }
