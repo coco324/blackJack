@@ -57,18 +57,5 @@ export default class GameServices {
         }
     }
 
-    // Récupérer l'historique des sessions
-    static async GetUserSessions() {
-        try {
-            const response = await fetch('/api/GetUserSessions', {
-                method: 'GET',
-                credentials: 'include'
-            });
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Erreur GetUserSessions:', error);
-            return null;
-        }
-    }
+    
 }
