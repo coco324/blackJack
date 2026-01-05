@@ -6,28 +6,29 @@ import medalComponent from '../components/logoComponents/medalComponent.vue';
 import UserServices from '../Services/UserServices';
 import { ref, onMounted } from 'vue';
 import router from '../router';
+import { UserStore } from '../stores/user';
 
 const isLoggedIn = ref(false);
 const user = ref(null);
 const stats = ref({ victoires: 0, parties: 0, taux: 0 });
-
+const store = UserStore()
+console.log(store.profile)
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
   await checkAuth();
-  if (isLoggedIn.value) {
-    await loadStats();
-  }
+
 });
 
 // 2. Fonction de Login
 async function fakeLogin() {
   const res = await UserServices.Login('a@a.com', 'aA1&zz');
-  console.log("Réponse Login:", res);
+  // console.log("Réponse Login:", res);
   
-  if (res.user) { // Si le backend renvoie l'objet user
+  if (res.user) { 
     isLoggedIn.value = true;
     user.value = res.user;
   }
+  await loadStats();
 }
 async function Logout() {
   UserServices.Logout();
@@ -76,7 +77,7 @@ async function game() {
     <div v-if="isLoggedIn" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <div class="absolute top-6 right-6 z-50 group">
         <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
-          <div class="w-8 h-8 rounded-full bg-[#0a263d] flex items-center justify-center border-2 border-yellow-500">
+          <div class="w-8 h-8 rounded-full bg-[#0a263d] flex items-center justify-center border-2 border-yellow-500 m-2">
             <span class="text-yellow-500 font-bold">{{ user?.username.charAt(0).toUpperCase() }}</span>
           </div>
           <p class="text-white font-bold mr-2">{{ user?.username }}</p>

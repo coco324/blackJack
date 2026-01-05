@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Cardcomponents from '../components/cardComponents.vue'
 import { game } from '../models/game.ts'
 import GameServices from '../Services/GameServices'
 import UserServices from '../Services/UserServices.ts'
+import backgroundImage from '../assets/ImageBackgoundHome.png'
 
 const router = useRouter()
 const user = ref(null);
@@ -124,7 +125,7 @@ router.push('/')
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center relative bg-gradient-to-b from-[#0b6b2f] to-[#0a5a29] bg-[radial-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(180deg,#0b6b2f_0%,#0a5a29_100%)] bg-[length:12px_12px,cover]">
+  <div class="h-screen flex items-center justify-center relative bg-cover bg-center" :style="{ backgroundImage: `url(${backgroundImage})` }"">
     
     <!-- ✅ Affichage du solde en haut à DROITE -->
     <div class="absolute top-6 right-6 text-white font-semibold text-lg bg-black/30 px-4 py-2 rounded-lg border border-white/20">
@@ -174,7 +175,7 @@ router.push('/')
       </div>
 
       <div class="absolute left-1/2 -translate-x-1/2 bottom-20 flex flex-col items-center gap-2">
-        <div class="mb-2 p-4 bg-green-800/50 rounded-lg flex gap-4">
+        <div class="mb-2 p-4 rounded-lg flex gap-4">
           <button
             v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
