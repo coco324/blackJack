@@ -1,6 +1,5 @@
 // card.ts
 export class card {
-  // Déclaration explicite des propriétés
   public readonly name: string;
   public readonly value: number;
   public readonly suit: string;
