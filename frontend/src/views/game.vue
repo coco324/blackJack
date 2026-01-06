@@ -41,6 +41,23 @@ onMounted(async () => {
   }
 })
 
+function split() {
+  if (gameInstance.value) {
+    currentSolde.value -= currentBet.value // Déduire la mise du solde
+    currentBet.value += currentBet.value // Doubler la mise pour le split
+    gameInstance.value.playerSplit()
+  }
+}
+
+function double() {
+  if (gameInstance.value) {
+    currentBet.value *= 2 // Doubler la mise pour le double
+    // Déduire immédiatement la mise du solde
+    currentSolde.value -= currentBet.value / 2
+    gameInstance.value.playerDouble()
+  }
+}
+
 function showBetMenu() {
   showBetSelection.value = true
 }
@@ -56,7 +73,6 @@ function selectBet(amount: number) {
 }
 
 function startGame() {
-  // On ne bloque plus si sessionId est null, on vérifie juste le solde
   if (currentBet.value > currentSolde.value) {
     alert('Solde insuffisant !')
     return
@@ -70,11 +86,11 @@ function startGame() {
 
   if (!gameInstance.value) {
     gameInstance.value = new game(id)
-    gameInstance.value.setBet(currentBet.value)
     gameInstance.value.startGame()
+    gameInstance.value.getPlayer().getCurrentHand().setBet(currentBet.value)
   } else {
     gameInstance.value.resetRound()
-    gameInstance.value.setBet(currentBet.value)
+    gameInstance.value.getCurrentHand().setBet(currentBet.value)
   }
   
   gameStarted.value = true
@@ -180,10 +196,15 @@ router.push('/')
           >
             Hit
           </button>
-          <button
-            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && gameInstance.canSplit()"
+          <button v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && currentSolde >= currentBet"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="gameInstance?.playerSplit()"
+            @click="double()">
+            Double 
+          </button>
+          <button
+            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && gameInstance.canSplit() && currentSolde >= currentBet"
+            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+            @click="split()"
           >
             Split
           </button>

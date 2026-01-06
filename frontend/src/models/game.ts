@@ -3,6 +3,7 @@ import { pack } from "./pack";
 import { player } from "./player";
 import { card } from "./card";
 import GameServices from "../Services/GameServices";
+import { hand } from "./hand";
 
 export class game{
 
@@ -11,7 +12,6 @@ export class game{
     private pack: pack
     private sessionId?: number
     private gameId?: number
-    private currentBet: number = 10
 
     public constructor(sessionId?: number){
         this.player = new player()
@@ -20,15 +20,7 @@ export class game{
         this.sessionId = sessionId
     }
 
-    public setBet(amount: number): void {
-        this.currentBet = amount
-    }
-
-    // ✅ Récupérer la mise
-    public getBet(): number {
-        return this.currentBet
-    }
-
+    
     public setSessionId(sessionId: number): void {
         this.sessionId = sessionId
     }
@@ -50,12 +42,12 @@ export class game{
             if (status === 'win') {
                 // Vérifier si c'est un blackjack naturel
                 if (hand.getscore() === 21 && hand.getCards().length === 2) {
-                    totalWinnings += this.currentBet * 2.5 // Blackjack paie 3:2 (mise + gain)
+                    totalWinnings += hand.getBet() * 2.5 // Blackjack paie 3:2 (mise + gain)
                 } else {
-                    totalWinnings += this.currentBet * 2 // Victoire normale (mise + gain)
+                    totalWinnings += hand.getBet() * 2 // Victoire normale (mise + gain)
                 }
             } else if (status === 'push') {
-                totalWinnings += this.currentBet // Récupère juste la mise
+                totalWinnings += hand.getBet() // Récupère juste la mise
             }
             // Si loose, on ne récupère rien (mise déjà déduite)
         }
@@ -74,7 +66,7 @@ export class game{
             hands.push({
                 playerType: 'player',
                 index: i,
-                bet: this.currentBet,
+                bet: hand.getBet(),
                 status: hand.getStatus(),
                 score: hand.getscore()
             })
@@ -206,6 +198,14 @@ export class game{
         return this.player.getMain()
     }
 
+    public getPlayer(): player {
+        return this.player
+    }
+
+    public getCurrentHand(): hand {
+        return this.player.getCurrentHand()
+    }
+
     // Retourne toutes les mains du joueur (utile pour les splits)
     public getPlayersMain(): card[][] {
         return this.player.getHands().map(h => h.getCards())
@@ -263,6 +263,13 @@ export class game{
 
         // Give the new hand a card from the pack
         newHand.addCarte(this.pack.GetCard())
+    }
+
+    public playerDouble(): void {
+        // Double the bet for the current hand
+        this.player.getCurrentHand().setBet(this.player.getCurrentHand().getBet() * 2)
+        this.playerHit()
+        this.playerStand()
     }
 
 // #endregion
