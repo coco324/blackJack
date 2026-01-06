@@ -40,7 +40,9 @@ export class player {
 
     // Crée une nouvelle main (pour le split)
     public addHand(): hand {
+        const bet = this.getCurrentHand().getBet()
         const newHand = new hand()
+        newHand.setBet(bet)
         this.hands.push(newHand)
         return newHand
     }

@@ -10,7 +10,7 @@ export const UserStore = defineStore('user', () => {
 
   async function initUser(){
     const res = await UserServices.CheckAuth()
-    if(res){
+    if(res.isConnected){
       user.value = new UserType(res.user.id, res.user.mail, res.user.username, res.user.solde)
       isLogin.value = true
     } else {

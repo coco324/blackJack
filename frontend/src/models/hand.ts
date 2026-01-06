@@ -44,4 +44,11 @@ export class hand {
     public setStatus(newStatus: 'start' | 'win' | 'loose' | 'push' | 'stop'): void {
         this.status = newStatus
     }
+
+    public getBet(): number {
+        return this.bet
+    }
+    public setBet(bet: number): void {
+        this.bet = bet
+    }
 }
