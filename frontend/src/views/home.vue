@@ -12,6 +12,9 @@ const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
   await UserStore().initUser();
+  if (UserStore().isLogin) {
+    await loadStats();
+  }
 });
 
 // 2. Fonction de Login
@@ -49,7 +52,7 @@ async function game() {
 <template>
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div v-if="!UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
-      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="fakeLogin()">Se connecter</button>
+      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="router.push('/login')">Se connecter</button>
       <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="router.push('/registration')">S'inscrire</button>
     </div>
     <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
