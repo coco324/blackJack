@@ -12,17 +12,20 @@ const isLoggedIn = ref(false);
 const user = ref(null);
 const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 const store = UserStore()
-console.log(store.profile)
+console.log(store.user)
+console.log(store.isLogin)
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
-  await checkAuth();
-
+  await store.initUser();
+  user.value = store.user;
 });
 
 // 2. Fonction de Login
 async function fakeLogin() {
   const res = await UserServices.Login('a@a.com', 'aA1&zz');
   // console.log("Réponse Login:", res);
+  await store.initUser();
+  console.log(store.user);
   
   if (res.user) { 
     isLoggedIn.value = true;
@@ -36,24 +39,11 @@ async function Logout() {
   user.value = null;
   stats.value = { victoires: 0, parties: 0, taux: 0 };
 }
-// 3. Fonction de vérification de session
-async function checkAuth() {
-  const res = await UserServices.CheckAuth();
-  console.log("Réponse CheckAuth:", res);
-  
-  if (res.isConnected) {
-    isLoggedIn.value = true;
-    user.value = res.user;
-    console.log(res.user);
-  } else {
-    isLoggedIn.value = false;
-    user.value = null;
-  }
-}
+
 
 async function loadStats() {
   const res = await UserServices.GetUserStats();
-  console.log(res);
+  // console.log(res);
   if (res && !res.error) {
     stats.value = {
       victoires: res.totalWins || 0,
