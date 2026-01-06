@@ -265,6 +265,14 @@ export class game{
         newHand.addCarte(this.pack.GetCard())
     }
 
+    public playerDouble(): void {
+        // Double the bet for the current hand
+        this.currentBet = this.currentBet * 2
+        this.playerHit()
+        // After doubling, the player must stand
+        this.playerStand()
+    }
+
 // #endregion
 
    
