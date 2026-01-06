@@ -125,19 +125,20 @@ async function game() {
 
       <!-- statistiques si connecté -->
       <div v-if="UserStore().isLogin" class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-3 gap-4 m-4 w-full">
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200  ">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.victoires }}</p>
           <p class="text-gray-300 text-sm font-semibold">Victoires</p>
         </div>
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.parties }}</p>
           <p class="text-gray-300 text-sm font-semibold">Parties</p>
         </div>
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.taux }}%</p>
           <p class="text-gray-300 text-sm font-semibold">Taux</p>
         </div>
       </div>
+      <p class="text-white font-light ">Misez intelligemment • Jouez responsable</p>
 
     </div>
   </div>
