@@ -50,13 +50,13 @@ async function game() {
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div v-if="!UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="fakeLogin()">Se connecter</button>
-      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="">S'inscrire</button>
+      <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="router.push('/registration')">S'inscrire</button>
     </div>
     <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <div class="absolute top-6 right-6 z-50 group">
         <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
           <div class="w-8 h-8 rounded-full bg-[#0a263d] flex items-center justify-center border-2 border-yellow-500 m-2">
-            <span class="text-yellow-500 font-bold">{{ UserStore().user.getUsername() }}</span>
+            <span class="text-yellow-500 font-bold">{{ UserStore().user.getUsername().charAt(0) }}</span>
           </div>
           <p class="text-white font-bold mr-2">{{ UserStore().user?.getUsername() }}</p>
         <div class="px-4 py-2 text-center min-w-[120px]">
