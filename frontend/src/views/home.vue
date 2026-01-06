@@ -12,6 +12,9 @@ const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
   await UserStore().initUser();
+  if (UserStore().isLogin) {
+    await loadStats();
+  }
 });
 
 // 2. Fonction de Login
@@ -49,7 +52,7 @@ async function game() {
 <template>
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div v-if="!UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
-      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="fakeLogin()">Se connecter</button>
+      <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="router.push('/login')">Se connecter</button>
       <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="router.push('/registration')">S'inscrire</button>
     </div>
     <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
@@ -122,19 +125,20 @@ async function game() {
 
       <!-- statistiques si connecté -->
       <div v-if="UserStore().isLogin" class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-3 gap-4 m-4 w-full">
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200  ">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.victoires }}</p>
           <p class="text-gray-300 text-sm font-semibold">Victoires</p>
         </div>
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.parties }}</p>
           <p class="text-gray-300 text-sm font-semibold">Parties</p>
         </div>
-        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
+        <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.taux }}%</p>
           <p class="text-gray-300 text-sm font-semibold">Taux</p>
         </div>
       </div>
+      <p class="text-white font-light ">Misez intelligemment • Jouez responsable</p>
 
     </div>
   </div>
