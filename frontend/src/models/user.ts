@@ -1,9 +1,9 @@
 export class user{
 
-    private id: number
-    private mail: string
-    private username: string
-    private solde: number 
+    public id: number
+    public mail: string
+    public username: string
+    public solde: number 
 
     constructor(id: number, mail: string, username: string, solde: number){
         this.id = id

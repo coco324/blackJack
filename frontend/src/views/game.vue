@@ -4,12 +4,10 @@ import { useRouter } from 'vue-router'
 import Cardcomponents from '../components/cardComponents.vue'
 import { game } from '../models/game.ts'
 import GameServices from '../Services/GameServices'
-import UserServices from '../Services/UserServices.ts'
 import backgroundImage from '../assets/ImageBackgoundHome.png'
+import { UserStore } from '../stores/user.ts'
 
 const router = useRouter()
-const user = ref(null);
-const isLoggedIn = ref(false);
 const gameStarted = ref(false)
 const gameInstance = ref<game | null>(null)
 const sessionId = ref<number | null>(null)
@@ -19,26 +17,18 @@ const showBetSelection = ref(false)
 
 onMounted(async () => {
   try {
-    const authRes = await UserServices.CheckAuth()
+    await UserStore().initUser()
     
-    // On vérifie la connexion ET l'existence de l'objet user
-    if (!authRes.isConnected || !authRes.user) {
-      user.value = null
-      isLoggedIn.value = false
+    // On vérifie la connexion 
+    if (!UserStore().isLogin) {
       return 
     }
     else {
-      isLoggedIn.value = true
-    
-      // On crée une constante locale : TypeScript "valide" son existence ici
-      const currentUser = authRes.user
-      user.value = currentUser
-
-      console.log('✅ Utilisateur identifié:', currentUser.username)
+      console.log('✅ Utilisateur identifié:', UserStore().user?.getUsername())
       console.log('📍 Création de la session...')
       
-      
-      const sessionData = await GameServices.CreateSession(currentUser.id)
+      const id = UserStore().user?.getId() || 0
+      const sessionData = await GameServices.CreateSession(id)
 
       if (sessionData) {
         sessionId.value = sessionData.sessionId
@@ -252,17 +242,3 @@ router.push('/')
   </div>
 </template>
 
-<style>
-html, body, #app {
-  height: 100%;
-  margin: 0;
-}
-
-body {
-  background: linear-gradient(180deg, #0b6b2f 0%, #0a5a29 100%);
-  background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                    linear-gradient(180deg, #0b6b2f 0%, #0a5a29 100%);
-  background-size: 12px 12px, cover;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-}
-</style>

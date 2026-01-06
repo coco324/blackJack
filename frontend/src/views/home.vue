@@ -8,35 +8,23 @@ import { ref, onMounted } from 'vue';
 import router from '../router';
 import { UserStore } from '../stores/user';
 
-const isLoggedIn = ref(false);
-const user = ref(null);
 const stats = ref({ victoires: 0, parties: 0, taux: 0 });
-const store = UserStore()
-console.log(store.user)
-console.log(store.isLogin)
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
 onMounted(async () => {
-  await store.initUser();
-  user.value = store.user;
+  await UserStore().initUser();
 });
 
 // 2. Fonction de Login
 async function fakeLogin() {
   const res = await UserServices.Login('a@a.com', 'aA1&zz');
   // console.log("Réponse Login:", res);
-  await store.initUser();
-  console.log(store.user);
-  
-  if (res.user) { 
-    isLoggedIn.value = true;
-    user.value = res.user;
-  }
+  await UserStore().initUser();
+
   await loadStats();
 }
 async function Logout() {
   UserServices.Logout();
-  isLoggedIn.value = false;
-  user.value = null;
+  UserStore().reset();
   stats.value = { victoires: 0, parties: 0, taux: 0 };
 }
 
@@ -60,21 +48,21 @@ async function game() {
 
 <template>
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center" :style="{ backgroundImage: `url(${backgroundImage})` }">
-    <div v-if="!isLoggedIn" class="absolute top-6 right-6 flex gap-4 p-2 ">
+    <div v-if="!UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="fakeLogin()">Se connecter</button>
       <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="">S'inscrire</button>
     </div>
-    <div v-if="isLoggedIn" class="absolute top-6 right-6 flex gap-4 p-2 ">
+    <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <div class="absolute top-6 right-6 z-50 group">
         <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
           <div class="w-8 h-8 rounded-full bg-[#0a263d] flex items-center justify-center border-2 border-yellow-500 m-2">
-            <span class="text-yellow-500 font-bold">{{ user?.username.charAt(0).toUpperCase() }}</span>
+            <span class="text-yellow-500 font-bold">{{ UserStore().user.getUsername() }}</span>
           </div>
-          <p class="text-white font-bold mr-2">{{ user?.username }}</p>
+          <p class="text-white font-bold mr-2">{{ UserStore().user?.getUsername() }}</p>
         <div class="px-4 py-2 text-center min-w-[120px]">
           <p class="text-[10px] text-gray-500 uppercase font-black leading-none mb-1">Solde</p>
           <p class="text-yellow-400 font-black flex items-center justify-center gap-1 text-[15px]">
-            {{ user?.solde }}
+            {{ UserStore().user?.getSolde() }}
             <span class="text-[15px] opacity-70">€</span>
           </p>
         </div>
@@ -89,13 +77,13 @@ async function game() {
 
 
       <div class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-2 gap-4 mb-8 m-4 w-full ">
-        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800" @click="game()">{{ user ? 'Jouer' : 'Jouer en invité' }}</button>
+        <button class="p-2 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg col-span-2 font-bold text-lg h-17 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 active:bg-gradient-to-r active:from-yellow-700 active:to-yellow-800" @click="game()">{{ UserStore().user ? 'Jouer' : 'Jouer en invité' }}</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">Régle du jeu</button>
         <button class="p-2 border border-gray-600 rounded-lg text-white h-15 hover:bg-gray-700 active:bg-gray-800">In comming ....</button>
       </div>
 
       
-      <div v-if="!isLoggedIn" class="w-full max-w-4xl mx-auto p-8 rounded-2xl bg-[#062c2c]/80 border border-white/5 backdrop-blur-md">
+      <div v-if="!UserStore().isLogin" class="w-full max-w-4xl mx-auto p-8 rounded-2xl bg-[#062c2c]/80 border border-white/5 backdrop-blur-md">
         <h3 class="text-[#00e699] text-center font-medium mb-10 text-lg">
           Connectez-vous pour débloquer plus de fonctionnalités !
         </h3>
@@ -133,7 +121,7 @@ async function game() {
       </div>
 
       <!-- statistiques si connecté -->
-      <div v-if="isLoggedIn" class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-3 gap-4 m-4 w-full">
+      <div v-if="UserStore().isLogin" class="border-2 border-[#806210] rounded-2xl p-6 bg-[#083042] grid grid-cols-3 gap-4 m-4 w-full">
         <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.victoires }}</p>
           <p class="text-gray-300 text-sm font-semibold">Victoires</p>
