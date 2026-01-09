@@ -13,6 +13,7 @@ const gameInstance = ref<game | null>(null)
 const sessionId = ref<number | null>(null)
 const currentSolde = ref(1000)
 const currentBet = ref(10)
+const startBet = ref(10)
 const showBetSelection = ref(false)
 
 onMounted(async () => {
@@ -40,7 +41,7 @@ onMounted(async () => {
     console.error('Erreur lors de l\'initialisation:', error)
   }
 })
-
+showBetSelection.value = true // a revoir plus tard
 function split() {
   if (gameInstance.value) {
     currentSolde.value -= currentBet.value // Déduire la mise du solde
@@ -62,12 +63,13 @@ function showBetMenu() {
   showBetSelection.value = true
 }
 
-function selectBet(amount: number) {
-  if (amount > currentSolde.value) {
+function selectBet(Bet: number) {
+  if (Bet > currentSolde.value) {
     alert('Solde insuffisant !')
     return
   }
-  currentBet.value = amount
+  startBet.value = Bet
+  currentBet.value = Bet
   showBetSelection.value = false
   startGame()
 }
@@ -87,7 +89,7 @@ function startGame() {
   if (!gameInstance.value) {
     gameInstance.value = new game(id)
     gameInstance.value.startGame()
-    gameInstance.value.getPlayer().getCurrentHand().setBet(currentBet.value)
+    gameInstance.value.getPlayer().getCurrentHand().setBet(currentBet.value) // ajouter la mise a la main
   } else {
     gameInstance.value.resetRound()
     gameInstance.value.getCurrentHand().setBet(currentBet.value)
@@ -114,6 +116,26 @@ async function newRound() {
   
   gameStarted.value = false
   showBetSelection.value = true
+}
+
+async function newRoundSameBet() {
+  if (!gameInstance.value) return
+  
+  // ✅ Calculer les gains (sans soustraire la mise, déjà faite)
+  const winnings = gameInstance.value.calculateWinnings()
+  currentSolde.value += winnings
+  
+  console.log('Gains:', winnings, 'Nouveau solde:', currentSolde.value)
+  
+  // ✅ Vérifier si le solde est épuisé
+  if (currentSolde.value <= 0) {
+    alert('Vous n\'avez plus de solde ! Session terminée.')
+    await endSession()
+    return
+  }
+  
+  gameStarted.value = false
+  selectBet(startBet.value)
 }
 
 async function endSession() {
@@ -160,6 +182,17 @@ router.push('/')
           class="bg-[#ffd54a] text-gray-900 px-8 py-4 rounded-lg text-lg font-bold cursor-pointer shadow-[0_6px_14px_rgba(0,0,0,0.25)] transition-transform duration-100 hover:bg-[#ffe066] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ bet }} €
+        </button>
+      </div>
+      <div class="border border-white/30 p-4 rounded-lg bg-black/20 mt-4">
+        <h2 class="text-white text-2xl font-bold mb-2">Mise Personalisé:</h2>
+        <input type="range" min="0" :max="currentSolde" v-model.number="startBet" class="w-full h-2 bg-orange-500 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        <button 
+          @click="selectBet(startBet)"
+          :disabled="startBet > currentSolde || startBet <= 0"
+          class="mt-3 w-full bg-[#ffd54a] text-gray-900 px-8 py-2 rounded-lg font-bold cursor-pointer hover:bg-[#ffe066] disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Valider {{ startBet }} €
         </button>
       </div>
     </div>
@@ -257,8 +290,16 @@ router.push('/')
         class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
         @click="newRound"
       >
-        Nouvelle partie
+        Nouvelle Mise
       </button>
+      <button 
+        v-if="gameInstance && gameInstance.allHandsPlayed()"
+        class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+        @click="newRoundSameBet"
+      >
+        Même Mise
+      </button>
+      
     </div>
   </div>
 </template>
