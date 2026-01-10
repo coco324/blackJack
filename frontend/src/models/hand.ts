@@ -23,7 +23,7 @@ export class hand {
         let score = 0
         let aceCount = 0
         for (const c of this.cards) {
-            if (!c.isFaceUp) continue
+            if (!c.getIsFaceUp()) continue
             score += c.getValue()
             if (c.getNom() === 'A') {
                 aceCount++

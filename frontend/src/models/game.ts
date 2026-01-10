@@ -127,6 +127,11 @@ export class game{
     // Passe à la main suivante après avoir fini de jouer la main courante
     public nextHand(): void {
         const hasNext = this.player.nextHand()
+        const hand = this.player.getCurrentHand()
+        if (hand.getscore() == 21 )
+        {
+            this.nextHand()
+        }
         if (!hasNext) {
             // Toutes les mains ont été jouées, on passe au dealer
             this.playDealer()
@@ -141,7 +146,7 @@ export class game{
     private async playDealer(): Promise<void> {
         // Dealer reveals hidden card
         for (const c of this.dealer.getMain()) {
-            c.isFaceUp = true
+            c.SetIsFaceUp(true)
         }
 
         while (this.dealer.getscore() < 17) {
@@ -163,19 +168,19 @@ export class game{
         if (this.player.getscore() === 21 && this.dealer.getScoreAllCards() === 21) {
             this.player.setStatus('push')
             for (const c of this.dealer.getMain()) {
-                c.isFaceUp = true
+                c.SetIsFaceUp(true)
             }
         }
         else if (this.player.getscore() === 21) {
             this.player.setStatus('win')
             for (const c of this.dealer.getMain()) {
-                c.isFaceUp = true
+                c.SetIsFaceUp(true)
             }
         }
         else if (this.dealer.getScoreAllCards() === 21) {
             this.player.setStatus('loose')
             for (const c of this.dealer.getMain()) {
-                c.isFaceUp = true
+                c.SetIsFaceUp(true)
             }
         }
 
@@ -254,21 +259,30 @@ export class game{
         // Create the split hand
         const newHand = this.player.addHand()
 
-        // Move the second card to the new hand (add then remove to preserve object)
+        // Move the second card to the new hand 
         newHand.addCarte(cardToMove)
         currentHand.removeCard(1)
 
-        // Give the original hand a hit (behaviour preserved from previous implementation)
         this.playerHit()
 
         // Give the new hand a card from the pack
         newHand.addCarte(this.pack.GetCard())
+
+        if(cards[0]?.getNom() == 'A' && cards[1]?.getNom() == 'A')
+        {
+            this.playerStand()
+            this.playerStand()
+        }
     }
 
     public playerDouble(): void {
         // Double the bet for the current hand
         this.player.getCurrentHand().setBet(this.player.getCurrentHand().getBet() * 2)
-        this.playerHit()
+        if(this.player.getCurrentHand().getscore() != 21)
+        {
+            this.playerHit()
+        }
+        
         this.playerStand()
     }
 

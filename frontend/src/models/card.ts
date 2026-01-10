@@ -1,10 +1,10 @@
 // card.ts
 export class card {
-  public readonly name: string;
-  public readonly value: number;
-  public readonly suit: string;
+  private readonly name: string;
+  private readonly value: number;
+  private readonly suit: string;
   // `isFaceUp` doit pouvoir changer (on retourne la carte), donc non readonly
-  public isFaceUp: boolean;
+  private isFaceUp: boolean;
 
   constructor(name: string, value: number, suit: string, isFaceUp: boolean = true) {
     this.name = name;
@@ -32,6 +32,12 @@ export class card {
 
   public flipCard(): void {
     this.isFaceUp = !this.isFaceUp;
+  }
+
+  public SetIsFaceUp(value: boolean): void
+  {
+    this.isFaceUp = value
+
   }
 }
 

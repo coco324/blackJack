@@ -44,17 +44,18 @@ onMounted(async () => {
 showBetSelection.value = true // a revoir plus tard
 function split() {
   if (gameInstance.value) {
-    currentSolde.value -= currentBet.value // Déduire la mise du solde
-    currentBet.value += currentBet.value // Doubler la mise pour le split
+    currentSolde.value -= startBet.value // Déduire la mise du solde
+    currentBet.value += startBet.value // Doubler la mise pour le split
     gameInstance.value.playerSplit()
   }
 }
 
 function double() {
   if (gameInstance.value) {
-    currentBet.value *= 2 // Doubler la mise pour le double
-    // Déduire immédiatement la mise du solde
-    currentSolde.value -= currentBet.value / 2
+    // Déduire la mise supplémentaire du solde (pour cette main uniquement)
+    const handBet = gameInstance.value.getCurrentHand().getBet()
+    currentSolde.value -= handBet
+    currentBet.value += handBet // Augmenter le total de la mise actuelle
     gameInstance.value.playerDouble()
   }
 }
@@ -257,8 +258,8 @@ router.push('/')
                     <Cardcomponents
                         v-for="(card, index) in hand"
                         :key="'hand-' + pIndex + '-card-' + index"
-                        :value="card.name"
-                        :suit="card.suit"
+                        :value="card.getNom()"
+                        :suit="card.getSigne()"
                         :faceUp="true"
                     />
                 </div>
@@ -277,9 +278,9 @@ router.push('/')
           <Cardcomponents
             v-for="(card, index) in gameInstance?.getDealerMain()"
             :key="`dealer-${index}`"
-            :value="card.name"
-            :suit="card.suit"
-            :faceUp="card.isFaceUp"
+            :value="card.getNom()"
+            :suit="card.getSigne()"
+            :faceUp="card.getIsFaceUp()"
             backVariant="dots"
           />
         </div>
