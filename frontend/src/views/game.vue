@@ -198,9 +198,11 @@ router.push('/')
           {{ bet }} €
         </button>
       </div>
-      <div class="border border-white/30 p-4 rounded-lg bg-black/20 mt-4">
+      <div class="border border-white/30 p-4 rounded-lg bg-black/20 mt-4 min-w-[400px]">
         <h2 class="text-white text-2xl font-bold mb-2">Mise Personalisé:</h2>
-        <input type="range" min="0" :max="currentSolde" v-model.number="startBet" class="w-full h-2 bg-orange-500 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        <div class="px-1">
+          <input type="range" min="0" :max="currentSolde" v-model.number="startBet" class="w-full h-2 bg-orange-500 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        </div>
         <button 
           @click="selectBet(startBet)"
           :disabled="startBet > currentSolde || startBet <= 0"
