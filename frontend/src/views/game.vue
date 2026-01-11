@@ -7,6 +7,7 @@ import GameServices from '../Services/GameServices'
 import backgroundImage from '../assets/ImageBackgoundHome.png'
 import { UserStore } from '../stores/user.ts'
 
+
 const router = useRouter()
 const gameStarted = ref(false)
 const gameInstance = ref<game | null>(null)
@@ -139,6 +140,16 @@ async function newRoundSameBet() {
   selectBet(startBet.value)
 }
 
+function formatScore(index: number): string {
+  if (!gameInstance.value) return '0'
+  
+  const scores = gameInstance.value.getPlayerScoreByIndexWithAs(index)
+  if (scores.length === 2 && scores[1] !== undefined && scores[1] > 0) {
+    return `${scores[0]} / ${scores[1]}`
+  }
+  return `${scores[0]}`
+}
+
 async function endSession() {
   // On vérifie que sessionId existe ET n'est pas 0
 if (sessionId.value && sessionId.value !== 0) {
@@ -147,6 +158,8 @@ if (sessionId.value && sessionId.value !== 0) {
 } else {
   console.log('👋 Fin de partie Invité (non enregistré)')
 }
+
+
 
 // Dans tous les cas, on redirige vers l'accueil
 router.push('/')
@@ -251,7 +264,7 @@ router.push('/')
               :class="gameInstance?.getCurrentHandIndex() === pIndex ? 'opacity-100 scale-105' : 'opacity-60 scale-95 brightness-75'"
             >
                 <div class="text-white/90 uppercase tracking-wider text-sm font-bold">
-                  Score : {{ gameInstance?.getPlayerScoreByIndex(pIndex) }}
+                  Score : {{ formatScore(pIndex) }}
                 </div>
                 
                 <div class="flex gap-4 justify-center">

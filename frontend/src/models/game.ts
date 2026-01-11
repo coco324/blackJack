@@ -127,14 +127,16 @@ export class game{
     // Passe à la main suivante après avoir fini de jouer la main courante
     public nextHand(): void {
         const hasNext = this.player.nextHand()
-        const hand = this.player.getCurrentHand()
-        if (hand.getscore() == 21 )
-        {
-            this.nextHand()
-        }
         if (!hasNext) {
             // Toutes les mains ont été jouées, on passe au dealer
             this.playDealer()
+            return
+        }
+        
+        const hand = this.player.getCurrentHand()
+        if (hand.getscore() == 21) {
+            hand.setStatus('stop')
+            this.nextHand()
         }
     }
 
@@ -307,6 +309,48 @@ export class game{
 
     public getPlayerScoreByIndex(index: number): number {
         return this.player.getHandByIndex(index).getscore()
+    }
+
+    public getPlayerScoreByIndexWithAs(index: number): number[]
+    {
+        const hand = this.player.getHandByIndex(index)
+        const cards = hand.getCards()
+
+        // Si blackjack (21), afficher uniquement 21
+        if (hand.getscore() === 21) {
+            return [21]
+        }
+
+        // Calculer le score brut avec tous les As comptés pour 11
+        let scoreWithAllAce11 = 0
+        let aceCount = 0
+        
+        for (const c of cards) {
+            if (!c.getIsFaceUp()) continue
+            scoreWithAllAce11 += c.getValue()
+            if (c.getNom() === 'A') {
+                aceCount++
+            }
+        }
+
+        // Si pas d'As, retourner juste le score
+        if (aceCount === 0) {
+            return [scoreWithAllAce11]
+        }
+
+        // Score avec tous les As à 1
+        const scoreWithAllAce1 = scoreWithAllAce11 - (10 * aceCount)
+        
+        // Score avec UN SEUL As à 11 et les autres à 1
+        const scoreWithOneAce11 = scoreWithAllAce1 + 10
+
+        // Si on peut avoir un As à 11 sans dépasser 21, afficher les deux valeurs
+        if (scoreWithOneAce11 <= 21) {
+            return [scoreWithOneAce11, scoreWithAllAce1]
+        }
+
+        // Sinon, tous les As sont à 1
+        return [scoreWithAllAce1]
     }
 
     // Retourne le statut du joueur courant
