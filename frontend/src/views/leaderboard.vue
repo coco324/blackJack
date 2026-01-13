@@ -6,18 +6,26 @@ import medalComponent from '../components/logoComponents/medalComponent.vue'
 import statComponent from '../components/logoComponents/statComponent.vue'
 import LeaderboardTable from '../components/LeaderboardTable.vue'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
+import UserServices from '../Services/UserServices'
 
 const router = useRouter()
+const leaders = ref([]);
 
-const leaders = ref([
-	{ username: 'Antony', wins: 120, games: 150, points: 2400 },
-	{ username: 'Marion', wins: 100, games: 140, points: 2000 },
-	{ username: 'Ludo', wins: 88, games: 120, points: 1760 },
-	{ username: 'Sacha', wins: 55, games: 95, points: 1100 },
-	{ username: 'Alex', wins: 42, games: 80, points: 840 },
-	{ username: 'Nora', wins: 30, games: 70, points: 600 },
-])
+onMounted(() => {
+    GetLeaderboard();
+});
+
+async function GetLeaderboard() {
+
+    const res = await UserServices.GetLeaderboard();
+    if (res) {
+        leaders.value = res;
+    }
+
+}
+
+
 </script>
 
 <template>
