@@ -51,15 +51,6 @@ function split() {
   }
 }
 
-function double() {
-  if (gameInstance.value) {
-    // Déduire la mise supplémentaire du solde (pour cette main uniquement)
-    const handBet = gameInstance.value.getCurrentHand().getBet()
-    currentSolde.value -= handBet
-    currentBet.value += handBet // Augmenter le total de la mise actuelle
-    gameInstance.value.playerDouble()
-  }
-}
 
 function showBetMenu() {
   showBetSelection.value = true
@@ -98,16 +89,58 @@ function startGame() {
   }
   
   gameStarted.value = true
+  
+  if(gameInstance.value.allHandsPlayed() === true)
+  {
+    UpdateSolde()
+  }
+
 }
+
+function double() {
+  if (gameInstance.value) {
+    // Déduire la mise supplémentaire du solde (pour cette main uniquement)
+    const handBet = gameInstance.value.getCurrentHand().getBet()
+    currentSolde.value -= handBet
+    currentBet.value += handBet // Augmenter le total de la mise actuelle
+    gameInstance.value.playerDouble()
+    UpdateSolde()
+  }
+}
+
+async function stand(){
+  if (!gameInstance.value) return
+  gameInstance.value.playerStand()
+  UpdateSolde()
+}
+
+async function Hit()
+{
+  if (!gameInstance.value) return
+  gameInstance.value.playerHit()
+  UpdateSolde()
+}
+
+async function UpdateSolde()
+{
+  if (!gameInstance.value) return
+
+  const status = gameInstance.value.allHandsPlayed();
+
+  if( status === false) return
+
+  if(status === true)
+  {
+    const winnings = gameInstance.value.calculateWinnings()
+    currentSolde.value += winnings
+    console.log('Gains:', winnings, 'Nouveau solde:', currentSolde.value)
+  }
+}
+
+
 
 async function newRound() {
   if (!gameInstance.value) return
-  
-  // ✅ Calculer les gains (sans soustraire la mise, déjà faite)
-  const winnings = gameInstance.value.calculateWinnings()
-  currentSolde.value += winnings
-  
-  console.log('Gains:', winnings, 'Nouveau solde:', currentSolde.value)
   
   // ✅ Vérifier si le solde est épuisé
   if (currentSolde.value <= 0) {
@@ -122,12 +155,6 @@ async function newRound() {
 
 async function newRoundSameBet() {
   if (!gameInstance.value) return
-  
-  // ✅ Calculer les gains (sans soustraire la mise, déjà faite)
-  const winnings = gameInstance.value.calculateWinnings()
-  currentSolde.value += winnings
-  
-  console.log('Gains:', winnings, 'Nouveau solde:', currentSolde.value)
   
   // ✅ Vérifier si le solde est épuisé
   if (currentSolde.value <= 0) {
@@ -234,14 +261,14 @@ router.push('/')
           <button
             v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="gameInstance?.playerStand()"
+            @click="stand()"
           >
             Stand
           </button>
           <button
             v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="gameInstance?.playerHit()"
+            @click="Hit()"
           >
             Hit
           </button>

@@ -41,7 +41,7 @@ export class game{
             
             if (status === 'win') {
                 // Vérifier si c'est un blackjack naturel
-                if (hand.getscore() === 21 && hand.getCards().length === 2) {
+                if (hand.getscore() === 21 && hand.getCards().length === 2 && this.player.getHands().length === 1) {
                     totalWinnings += hand.getBet() * 2.5 // Blackjack paie 3:2 (mise + gain)
                 } else {
                     totalWinnings += hand.getBet() * 2 // Victoire normale (mise + gain)
@@ -205,6 +205,7 @@ export class game{
         return this.player.getMain()
     }
 
+
     public getPlayer(): player {
         return this.player
     }
@@ -352,7 +353,6 @@ export class game{
         // Sinon, tous les As sont à 1
         return [scoreWithAllAce1]
     }
-
     // Retourne le statut du joueur courant
     public getPlayerStatus(): 'start' | 'win' | 'loose' | 'push' | 'stop' {
         return this.player.getStatus()
