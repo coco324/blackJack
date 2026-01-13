@@ -168,3 +168,15 @@ export async function GetUserStats(req, res) {
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 }
+export async function GetLeaderboard(req, res) {
+  try {
+    const [result] = await connection.execute(
+      'CALL GetLeaderboard()'
+    );
+    const leaders = result[0];
+    return res.json(leaders);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}

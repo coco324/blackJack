@@ -4,6 +4,7 @@ import game from '../views/game.vue';
 import registration from '../views/registration.vue';
 import login from '../views/login.vue';
 import rules from '../views/rules.vue';
+import Leaderboard from '../views/leaderboard.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,6 +28,10 @@ const router = createRouter({
     {
       path: '/rules',
       component: rules,
+    },
+    {
+      path: '/leaderboard',
+      component: Leaderboard
     }
   ],
 })
