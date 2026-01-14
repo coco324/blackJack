@@ -1,12 +1,12 @@
 <script setup>
 import backgroundImage from '../assets/ImageBackgoundHome.png'
-import trophyComponent from '../components/logoComponents/trophyComponent.vue';
-import statComponent from '../components/logoComponents/statComponent.vue';
-import medalComponent from '../components/logoComponents/medalComponent.vue';
 import UserServices from '../Services/UserServices';
 import { ref, onMounted } from 'vue';
 import router from '../router';
 import { UserStore } from '../stores/user';
+import medal from '../assets/medal.svg';
+import trophy from '../assets/trophy.svg';
+import statsImg from '../assets/stats.svg';
 
 const stats = ref({ victoires: 0, parties: 0, taux: 0 });
 // 1. Vérification automatique au chargement (et à chaque retour sur la page)
@@ -92,7 +92,7 @@ async function loadStats() {
       
         <div class="flex flex-col items-center hover:scale-110 duration-200 group">
           <div class="w-16 h-16 rounded-full bg-[#0a3d3d] flex items-center justify-center mb-4 ">
-            <trophyComponent class="w-7 h-7 text-[#00e699]" />
+            <img :src="trophy" alt="Trophy" />
           </div>
           <span class="text-gray-300 text-sm font-bold ">
             Classement mondial
@@ -101,7 +101,7 @@ async function loadStats() {
 
         <div class="flex flex-col items-center hover:scale-110 duration-200 group">
           <div class="w-16 h-16 rounded-full bg-[#0a3d3d] flex items-center justify-center mb-4 ">
-            <statComponent class="w-7 h-7 text-[#00e699]" />
+            <img :src="statsImg" alt="Stat" />
           </div>
           <span class="text-gray-300 text-sm font-bold">
             Suivie des statistiques
@@ -109,8 +109,8 @@ async function loadStats() {
         </div>
 
         <div class="flex flex-col items-center hover:scale-110 duration-200 group">
-          <div class="w-16 h-16 rounded-full bg-[#0a3d3d] flex items-center justify-center mb-4">
-            <medalComponent class="w-7 h-7 text-[#00e699]" />
+          <div class="w-16 h-16 rounded-full bg-[#0a3d3d] flex items-center justify-center mb-4 ">
+            <img :src="medal" alt="Medal" />
           </div>
           <span class="text-gray-300 text-sm font-bold">
             Succes & récompenses
