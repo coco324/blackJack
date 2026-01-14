@@ -272,7 +272,7 @@ router.push('/')
           >
             Hit
           </button>
-          <button v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && currentSolde >= currentBet"
+          <button v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && currentSolde >= currentBet && gameInstance?.getCurrentHand().getCards().length === 2"
             class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
             @click="double()">
             Double 
