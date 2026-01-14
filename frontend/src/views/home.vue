@@ -39,8 +39,11 @@ async function loadStats() {
     stats.value = {
       victoires: res.totalWins || 0,
       parties: res.totalGames || 0,
-      taux: (res.totalWins / res.totalGames * 100).toFixed(1),
+      taux: ((res.totalWins / res.totalGames) * 100).toFixed(1),
     };
+    if ((stats.value.taux) === 'NaN') {
+      stats.value.taux = 0;
+    }
   }
 }
 
