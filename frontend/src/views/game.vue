@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import Cardcomponents from '../components/cardComponents.vue'
 import { game } from '../models/game.ts'
 import GameServices from '../Services/GameServices'
 import backgroundImage from '../assets/ImageBackgoundHome.png'
 import { UserStore } from '../stores/user.ts'
+import { gsap } from 'gsap'
 
 
 const router = useRouter()
@@ -17,6 +18,43 @@ const currentBet = ref(10)
 const startBet = ref(10)
 const showBetSelection = ref(false)
 
+const winNotifications = ref<{id: number, amount: number}[]>([])
+let nextNotificationId = 0
+
+async function triggerWinAnimation(amount: number) {
+  if (amount <= 0) return
+  
+  const id = nextNotificationId++
+  winNotifications.value.push({ id, amount })
+
+  // On attend que Vue affiche l'élément
+  await nextTick()
+  
+  const element = document.getElementById(`win-${id}`)
+  if (element) {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // Supprimer l'élément de la liste à la fin
+        winNotifications.value = winNotifications.value.filter(n => n.id !== id)
+      }
+    })
+
+    // Animation style Casino
+    tl.fromTo(element, 
+      { opacity: 0, scale: 0.2, y: 0 },
+      { opacity: 1, scale: 1.0, y: -50, duration: 0.4, ease: "back.out(1.0)" }
+    )
+    .to(element, {
+      x: window.innerWidth / 2.5, // Direction le coin droit
+      y: -window.innerHeight / 2.5, // Direction le haut
+      opacity: 0,
+      scale: 0.5,
+      duration: 0.8,
+      ease: "power2.in",
+      delay: 0.3
+    })
+  }
+}
 onMounted(async () => {
   try {
     await UserStore().initUser()
@@ -121,19 +159,17 @@ async function Hit()
   UpdateSolde()
 }
 
-async function UpdateSolde()
-{
+async function UpdateSolde() {
   if (!gameInstance.value) return
+  const status = gameInstance.value.allHandsPlayed()
+  if (status === false) return
 
-  const status = gameInstance.value.allHandsPlayed();
-
-  if( status === false) return
-
-  if(status === true)
-  {
+  if (status === true) {
     const winnings = gameInstance.value.calculateWinnings()
+    if (winnings > currentBet .value) {
+      triggerWinAnimation(winnings) // ✅ On lance l'animation ici
+    }
     currentSolde.value += winnings
-    console.log('Gains:', winnings, 'Nouveau solde:', currentSolde.value)
   }
 }
 
@@ -347,6 +383,18 @@ router.push('/')
       </div>
 
       
+    </div>
+    <div class="fixed inset-0 pointer-events-none z-[100]">
+      <div 
+        v-for="win in winNotifications" 
+        :key="win.id"
+        :id="'win-' + win.id"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      >
+        <span class="text-5xl md:text-7xl font-black text-yellow-400 drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] italic">
+          +{{ win.amount }} €
+        </span>
+      </div>
     </div>
   </div>
 </template>
