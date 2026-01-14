@@ -114,6 +114,7 @@ export class game{
         const cards = currentHand.getCards()
         if (cards.length !== 2) return false
         if (!cards[0] || !cards[1]) return false
+        if(this.player.getHands().length >= 4) return false // Limite de 4 mains
         return cards[0].getValue() === cards[1].getValue()
     }
 

@@ -1,9 +1,6 @@
 
 <script setup>
 import backgroundImage from '../assets/ImageBackgoundHome.png'
-import trophyComponent from '../components/logoComponents/trophyComponent.vue'
-import medalComponent from '../components/logoComponents/medalComponent.vue'
-import statComponent from '../components/logoComponents/statComponent.vue'
 import LeaderboardTable from '../components/LeaderboardTable.vue'
 import { useRouter } from 'vue-router'
 import { ref,onMounted } from 'vue'
