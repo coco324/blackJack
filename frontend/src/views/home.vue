@@ -135,7 +135,7 @@ async function loadStats() {
         </div>
         <div class="flex flex-col items-center p-4 rounded-xl bg-gradient-to-b from-[#0d3d4d]/50 to-[#0a2d3d]/50 hover:scale-105 duration-200">
           <p class="text-5xl font-black text-yellow-400 mb-2">{{ stats.taux }}%</p>
-          <p class="text-gray-300 text-sm font-semibold">Taux</p>
+          <p class="text-gray-300 text-sm font-semibold">Taux de victoires</p>
         </div>
       </div>
       <p class="text-white font-light ">Misez intelligemment • Jouez responsable</p>

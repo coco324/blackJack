@@ -11,7 +11,7 @@ const router = useRouter()
     <!-- Bouton retour -->
     <button 
       @click="router.push('/')"
-      class="absolute top-6 left-6 bg-gray-800/80 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"
+      class="absolute top-6 left-6 bg-gray-800/80 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>

@@ -252,44 +252,62 @@ router.push('/')
     <!-- Zone de jeu -->
     <div v-else class="flex flex-col items-center gap-8 p-5">
       <!-- Affichage de la mise actuelle -->
-      <div class="absolute top-20 text-white font-semibold bg-black/30 px-4 py-2 rounded-lg border border-white/20">
+      <div class="absolute top-18 md:top-10 text-white font-semibold bg-black/30 px-4 py-2 rounded-lg border border-white/20 ">
         Mise: {{ currentBet }} €
       </div>
 
       <div class="absolute left-1/2 -translate-x-1/2 bottom-20 flex flex-col items-center gap-2">
         <div class="mb-2 p-4 rounded-lg flex gap-4">
-          <button
-            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
-            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="stand()"
-          >
-            Stand
-          </button>
-          <button
-            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start'"
-            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="Hit()"
-          >
-            Hit
-          </button>
-          <button v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && currentSolde >= currentBet && gameInstance?.getCurrentHand().getCards().length === 2"
-            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="double()">
-            Double 
-          </button>
-          <button
-            v-if="gameInstance && gameInstance.getPlayerStatus() === 'start' && gameInstance.canSplit() && currentSolde >= currentBet"
-            class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-            @click="split()"
-          >
-            Split
-          </button>
+          <template v-if="gameInstance && !gameInstance.allHandsPlayed()">
+            <button
+              v-if="gameInstance.getPlayerStatus() === 'start'"
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+              @click="stand()"
+            >
+              Stand
+            </button>
+            <button
+              v-if="gameInstance.getPlayerStatus() === 'start'"
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+              @click="Hit()"
+            >
+              Hit
+            </button>
+            <button 
+              v-if="gameInstance.getPlayerStatus() === 'start' && currentSolde >= currentBet && gameInstance?.getCurrentHand().getCards().length === 2"
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+              @click="double()">
+              Double 
+            </button>
+            <button
+              v-if="gameInstance.getPlayerStatus() === 'start' && gameInstance.canSplit() && currentSolde >= currentBet"
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
+              @click="split()"
+            >
+              Split
+            </button>
+          </template>
+
+          <template v-else-if="gameInstance && gameInstance.allHandsPlayed()">
+            <button 
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98] whitespace-nowrap"
+              @click="newRound"
+            >
+              Nouvelle Mise
+            </button>
+            <button 
+              class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98] whitespace-nowrap"
+              @click="newRoundSameBet"
+            >
+              Même Mise
+            </button>
+          </template>
         </div>
         <div class="flex space-x-10 justify-center items-start">
             <div 
               v-for="(hand, pIndex) in gameInstance?.getPlayersMain()" 
               :key="pIndex" 
-              class="flex flex-col gap-2 items-center transition-all duration-300"
+              class="flex flex-col gap-2 items-center transition-all duration-300 relative"
               :class="gameInstance?.getCurrentHandIndex() === pIndex ? 'opacity-100 scale-105' : 'opacity-60 scale-95 brightness-75'"
             >
                 <div class="text-white/90 uppercase tracking-wider text-sm font-bold">
@@ -306,7 +324,7 @@ router.push('/')
                     />
                 </div>
 
-                <div v-if="gameInstance && (gameInstance.getPlayerStatusByIndex(pIndex) === 'win' || gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' || gameInstance.getPlayerStatusByIndex(pIndex) === 'push')" class="mt-2 text-lg font-bold text-yellow-300">
+                <div v-if="gameInstance && (gameInstance.getPlayerStatusByIndex(pIndex) === 'win' || gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' || gameInstance.getPlayerStatusByIndex(pIndex) === 'push')" class="mt-2 text-lg font-bold text-yellow-300 absolute top-full w-full text-center">
                   {{ gameInstance.getPlayerStatusByIndex(pIndex) === 'win' ? 'Gagné !' : gameInstance.getPlayerStatusByIndex(pIndex) === 'loose' ? 'Perdu !' : "Égalité !" }}
                 </div>
             </div>
@@ -328,22 +346,7 @@ router.push('/')
         </div>
       </div>
 
-      <button 
-        v-if="gameInstance && gameInstance.allHandsPlayed()"
-        class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-        @click="newRound"
-      >
-        Nouvelle Mise
-      </button>
-      <button 
-        v-if="gameInstance && gameInstance.allHandsPlayed()"
-        class="bg-white/90 text-[#0b6b2f] px-6 py-3 rounded-lg border-2 border-white/30 font-semibold cursor-pointer transition-all duration-200 hover:bg-white hover:scale-105 active:scale-[0.98]"
-        @click="newRoundSameBet"
-      >
-        Même Mise
-      </button>
       
     </div>
   </div>
 </template>
-
