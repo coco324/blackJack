@@ -333,7 +333,7 @@ router.push('/')
 
       <!-- Zone du croupier -->
       <div class="absolute left-1/2 -translate-x-1/2 top-28 flex flex-col items-center gap-3">
-        <div class="text-white/90 uppercase tracking-wider text-sm">Croupier - Score : {{ gameInstance?.getDealerScore() }}</div>
+        <div class="text-white/90 uppercase tracking-wider text-sm font-bold">Croupier - Score : {{ gameInstance?.getDealerScore() }}</div>
         <div class="flex gap-4 justify-center items-center">
           <Cardcomponents
             v-for="(card, index) in gameInstance?.getDealerMain()"
