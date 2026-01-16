@@ -19,6 +19,7 @@ const startBet = ref(10)
 const showBetSelection = ref(false)
 
 const winNotifications = ref<{id: number, amount: number}[]>([])
+const lossNotifications = ref<{id: number, amount: number}[]>([])
 let nextNotificationId = 0
 
 async function triggerWinAnimation(amount: number) {
@@ -55,6 +56,42 @@ async function triggerWinAnimation(amount: number) {
     })
   }
 }
+
+async function triggerLossAnimation(amount: number) {
+  if (amount <= 0) return
+  
+  const id = nextNotificationId++
+  lossNotifications.value.push({ id, amount })
+
+  // On attend que Vue affiche l'élément
+  await nextTick()
+  
+  const element = document.getElementById(`loss-${id}`)
+  if (element) {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // Supprimer l'élément de la liste à la fin
+        lossNotifications.value = lossNotifications.value.filter(n => n.id !== id)
+      }
+    })
+
+    // Animation style Casino - perte (descend vers le bas)
+    tl.fromTo(element, 
+      { opacity: 0, scale: 0.2, y: 0 },
+      { opacity: 1, scale: 1.0, y: 50, duration: 0.4, ease: "back.out(1.0)" }
+    )
+    .to(element, {
+      x: 0,
+      y: window.innerHeight / 2, // Direction le bas
+      opacity: 0,
+      scale: 0.5,
+      duration: 0.8,
+      ease: "power2.in",
+      delay: 0.3
+    })
+  }
+}
+
 onMounted(async () => {
   try {
     await UserStore().initUser()
@@ -166,8 +203,14 @@ async function UpdateSolde() {
 
   if (status === true) {
     const winnings = gameInstance.value.calculateWinnings()
-    if (winnings > currentBet .value) {
-      triggerWinAnimation(winnings) // ✅ On lance l'animation ici
+    console.log('💰 Winnings:', winnings, '| Mise totale:', currentBet.value)
+    
+    if (winnings > currentBet.value) {
+      const gain = winnings - currentBet.value
+      triggerWinAnimation(gain) // Animation de gain net
+    } else if (winnings < currentBet.value) {
+      const loss = currentBet.value - winnings // Calcul de la perte réelle
+      triggerLossAnimation(loss) // Animation de perte
     }
     currentSolde.value += winnings
   }
@@ -393,6 +436,16 @@ router.push('/')
       >
         <span class="text-5xl md:text-7xl font-black text-yellow-400 drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] italic">
           +{{ win.amount }} €
+        </span>
+      </div>
+      <div 
+        v-for="loss in lossNotifications" 
+        :key="loss.id"
+        :id="'loss-' + loss.id"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      >
+        <span class="text-5xl md:text-7xl font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)] italic">
+          -{{ loss.amount }} €
         </span>
       </div>
     </div>
