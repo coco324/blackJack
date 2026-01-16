@@ -1,10 +1,19 @@
 {
-  "dependencies": {
-    "gsap": "^3.14.2",
-    "pinia": "^3.0.4",
-    "vue-router": "^4.6.4"
+  "name": "blackjack-project",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Projet Fullstack Blackjack",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "install-all": "npm install",
+    "dev-front": "npm run dev -w frontend",
+    "dev-back": "npm run dev -w backend",
+    "dev": "npx concurrently \"npm run dev-front\" \"npm run dev-back\""
   },
   "devDependencies": {
-    "vite-plugin-vue-devtools": "^8.0.5"
+    "concurrently": "^9.1.0"
   }
 }
