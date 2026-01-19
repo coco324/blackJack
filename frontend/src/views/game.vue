@@ -63,26 +63,26 @@ async function triggerLossAnimation(amount: number) {
   const id = nextNotificationId++
   lossNotifications.value.push({ id, amount })
 
-  // On attend que Vue affiche l'élément
   await nextTick()
   
   const element = document.getElementById(`loss-${id}`)
   if (element) {
     const tl = gsap.timeline({
       onComplete: () => {
-        // Supprimer l'élément de la liste à la fin
         lossNotifications.value = lossNotifications.value.filter(n => n.id !== id)
       }
     })
 
-    // Animation style Casino - perte (descend vers le bas)
+    // Animation modifiée pour aller vers le haut
     tl.fromTo(element, 
       { opacity: 0, scale: 0.2, y: 0 },
-      { opacity: 1, scale: 1.0, y: 50, duration: 0.4, ease: "back.out(1.0)" }
+      // y: -50 fait monter l'élément de 50px au début
+      { opacity: 1, scale: 1.0, y: -50, duration: 0.4, ease: "back.out(1.0)" }
     )
     .to(element, {
       x: 0,
-      y: window.innerHeight / 2, // Direction le bas
+      // y: -window.innerHeight / 2 propulse l'élément vers la moitié supérieure de l'écran
+      y: -(window.innerHeight / 2), 
       opacity: 0,
       scale: 0.5,
       duration: 0.8,
