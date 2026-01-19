@@ -9,8 +9,8 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // 1. Un objet réactif pour les données du formulaire
 const form = ref({
-  email: "a@a.com",
-  password: "aA1&zz",
+  email: "",
+  password: "",
 });
 // 2. Un objet pour gérer l'état des erreurs
 const errors = ref({

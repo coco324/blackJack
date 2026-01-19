@@ -101,8 +101,6 @@ onMounted(async () => {
       return 
     }
     else {
-      console.log('✅ Utilisateur identifié:', UserStore().user?.getUsername())
-      console.log('📍 Création de la session...')
       
       const id = UserStore().user?.getId() || 0
       const sessionData = await GameServices.CreateSession(id)
@@ -203,7 +201,6 @@ async function UpdateSolde() {
 
   if (status === true) {
     const winnings = gameInstance.value.calculateWinnings()
-    console.log('💰 Winnings:', winnings, '| Mise totale:', currentBet.value)
     
     if (winnings > currentBet.value) {
       const gain = winnings - currentBet.value
@@ -257,13 +254,10 @@ function formatScore(index: number): string {
 }
 
 async function endSession() {
-  // On vérifie que sessionId existe ET n'est pas 0
-if (sessionId.value && sessionId.value !== 0) {
-  console.log('🛑 Fin de session enregistrée:', sessionId.value, 'Solde:', currentSolde.value)
-  await GameServices.EndSession(sessionId.value, currentSolde.value)
-} else {
-  console.log('👋 Fin de partie Invité (non enregistré)')
-}
+  // vérifie que sessionId existe ET n'est pas 0
+  if (sessionId.value && sessionId.value !== 0) {
+    await GameServices.EndSession(sessionId.value, currentSolde.value)
+    }
 
 
 

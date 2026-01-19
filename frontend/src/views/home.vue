@@ -108,7 +108,7 @@ async function loadStats() {
             <img :src="statsImg" alt="Stat" />
           </div>
           <span class="text-gray-300 text-sm font-bold">
-            Suivie des statistiques
+            Suivi des statistiques
           </span>
         </div>
 
