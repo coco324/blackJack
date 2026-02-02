@@ -90,5 +90,22 @@ export default class UserServices {
             return { error: error.message };
         }
     }
+
+    static async GetAllUsers() {
+        try {
+            const response = await fetch(`/api/GetAllUsers`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch leaderboard');
+            }
+            return await response.json();
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    }
     
 }
