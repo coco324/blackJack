@@ -107,5 +107,22 @@ export default class UserServices {
             return { error: error.message };
         }
     }
+
+    static async GetExamData() {
+        try {
+            const response = await fetch(`/api/GetExamData`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch exam data');
+            }
+            return await response.json();
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    }
     
 }

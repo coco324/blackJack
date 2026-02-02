@@ -196,3 +196,16 @@ export async function GetAllUsers(req, res) {
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 }
+
+export async function GetExamData(req, res) {
+  try {
+    // Exemple : récupérer les 10 premiers utilisateurs
+    const [rows] = await connection.execute(
+      'requete SQL ici'
+    );
+    return res.json(rows);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}
