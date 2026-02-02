@@ -49,6 +49,7 @@ export async function CreateUser(req, res) {
       mail: userRow.mail,
       username: userRow.username,
       solde : userRow.solde,
+      isAdmin: userRow.isAdmin
     };
     
     return res.json({ message: 'Utilisateur créé', user: req.session.user });
@@ -94,6 +95,7 @@ export async function Login(req, res) {
       username: userRow.username,
       description: userRow.description,
       solde: userRow.solde,
+      isAdmin: userRow.isAdmin
     };
 
     return res.json({
@@ -168,6 +170,7 @@ export async function GetUserStats(req, res) {
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 }
+
 export async function GetLeaderboard(req, res) {
   try {
     const [result] = await connection.execute(
@@ -175,6 +178,19 @@ export async function GetLeaderboard(req, res) {
     );
     const leaders = result[0];
     return res.json(leaders);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}
+
+export async function GetAllUsers(req, res) {
+  try {
+    const [result] = await connection.execute(
+      'CALL GetAllUsers()'
+    );
+    const Users = result[0];
+    return res.json(Users);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Erreur serveur' });

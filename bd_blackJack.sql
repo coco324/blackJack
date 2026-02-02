@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS db_blackjack;
-USE db_blackjack;
+CREATE DATABASE IF NOT EXISTS bd_blackjack;
+USE bd_blackjack;
 
 DROP TABLE IF EXISTS Hand;
 DROP TABLE IF EXISTS Game;
@@ -13,7 +13,8 @@ CREATE TABLE user (
     password VARCHAR(255) NOT NULL,
     username VARCHAR(50) NOT NULL,
     solde DECIMAL(10,2) DEFAULT 1000.00,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isAdmin boolean DEFAULT false
 ) ENGINE=InnoDB;
 
 -- Table Session
@@ -58,7 +59,7 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS LoginUser$$
 CREATE PROCEDURE LoginUser(IN p_mail VARCHAR(255))
 BEGIN
-    SELECT id, mail, username, password, solde
+    SELECT id, mail, username, password, solde,isAdmin
     FROM user 
     WHERE mail = p_mail;
 END$$
@@ -82,7 +83,7 @@ BEGIN
         INSERT INTO user(mail, password, username) 
         VALUES(p_mail, p_password, p_username);
         
-        SELECT id, mail, username, solde, FALSE AS error
+        SELECT id, mail, username, solde, isAdmin, FALSE AS error
         FROM user 
         WHERE mail = p_mail;
     END IF;
@@ -222,28 +223,28 @@ DROP PROCEDURE IF EXISTS GetAllUsers$$
 
 CREATE PROCEDURE GetAllUsers()
 BEGIN
-    SELECT username,solde from user order by solde desc;
+    SELECT username,solde,mail,id from user order by id ;
 END$$
 
 DELIMITER ;
 
 -- Insertion de fake user pour le classement 
-INSERT INTO user (mail, password, username, solde) VALUES
-('ace_king@blackjack.com', 'hashed_pwd_1', 'AceHigh', 5400.00),
-('lucky_clover@test.fr', 'hashed_pwd_2', 'Lucky', 1250.50),
-('dealer_buster@gmail.com', 'hashed_pwd_3', 'BustMaster', 890.00),
-('queen_hearts@casino.com', 'hashed_pwd_4', 'QueenOfHearts', 12400.75),
-('shadow_player@outlook.com', 'hashed_pwd_5', 'ShadowBet', 450.00),
-('gold_miner@test.com', 'hashed_pwd_6', 'GoldDigger', 3200.20),
-('all_in_tom@yahoo.com', 'hashed_pwd_7', 'AllInTom', 10.00),
-('pro_gambler@club.com', 'hashed_pwd_8', 'VegasPro', 15600.00),
-('beginner_lane@test.fr', 'hashed_pwd_9', 'NewbieMike', 1000.00),
-('shark_cards@ocean.com', 'hashed_pwd_10', 'CardShark', 7800.40),
-('chip_stacker@poker.com', 'hashed_pwd_11', 'ChipStacker', 2100.00),
-('risky_business@live.com', 'hashed_pwd_12', 'RiskyBiz', 65.25),
-('diamond_hand@crypto.fr', 'hashed_pwd_13', 'DiamondPlayer', 9200.00),
-('joker_wild@fun.com', 'hashed_pwd_14', 'WildJoker', 1340.10),
-('blackjack_pro@master.com', 'hashed_pwd_15', 'BJ_Master', 4450.00),
-('a@a.com',"$2b$10$FT5epQj0VD3yL4axNCTMOuTiZJupqR6m3rbw8cF0zjOHuuFbuWCHC",'test',1000.00);
-
+INSERT INTO user (mail, password, username, solde, isAdmin) VALUES
+('ace_king@blackjack.com', 'hashed_pwd_1', 'AceHigh', 5400.00, false),
+('lucky_clover@test.fr', 'hashed_pwd_2', 'Lucky', 1250.50, false),
+('dealer_buster@gmail.com', 'hashed_pwd_3', 'BustMaster', 890.00, false),
+('queen_hearts@casino.com', 'hashed_pwd_4', 'QueenOfHearts', 12400.75, false),
+('shadow_player@outlook.com', 'hashed_pwd_5', 'ShadowBet', 450.00, false),
+('gold_miner@test.com', 'hashed_pwd_6', 'GoldDigger', 3200.20, false),
+('all_in_tom@yahoo.com', 'hashed_pwd_7', 'AllInTom', 10.00, false),
+('pro_gambler@club.com', 'hashed_pwd_8', 'VegasPro', 15600.00, false),
+('beginner_lane@test.fr', 'hashed_pwd_9', 'NewbieMike', 1000.00, false),
+('shark_cards@ocean.com', 'hashed_pwd_10', 'CardShark', 7800.40, false),
+('chip_stacker@poker.com', 'hashed_pwd_11', 'ChipStacker', 2100.00, false),
+('risky_business@live.com', 'hashed_pwd_12', 'RiskyBiz', 65.25, false),
+('diamond_hand@crypto.fr', 'hashed_pwd_13', 'DiamondPlayer', 9200.00, false),
+('joker_wild@fun.com', 'hashed_pwd_14', 'WildJoker', 1340.10, false),
+('blackjack_pro@master.com', 'hashed_pwd_15', 'BJ_Master', 4450.00, false),
+('a@a.com',"$2b$10$FT5epQj0VD3yL4axNCTMOuTiZJupqR6m3rbw8cF0zjOHuuFbuWCHC",'test',1000.00, false),
+('admin@a.com',"$2b$10$3HKCnM/PJbdQPkQneUqeKuFMsiOOvuHbGQ7.uAnez5qW5btaYqyue",'Admin',1000.00, true);
 

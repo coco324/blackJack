@@ -1,15 +1,17 @@
 export class user{
 
-    public id: number
-    public mail: string
-    public username: string
-    public solde: number 
+    private id: number
+    private mail: string
+    private username: string
+    private solde: number
+    private isAdmin: boolean
 
-    constructor(id: number, mail: string, username: string, solde: number){
+    constructor(id: number, mail: string, username: string, solde: number , isAdmin: boolean){
         this.id = id
         this.mail = mail
         this.username = username
         this.solde = solde
+        this.isAdmin = isAdmin
     }
 
     public getId(): number {
@@ -27,5 +29,7 @@ export class user{
     public setSolde(solde: number): void {
         this.solde = solde
     }
-    
+    public getIsAdmin(): boolean {
+        return this.isAdmin
+    }
 }
