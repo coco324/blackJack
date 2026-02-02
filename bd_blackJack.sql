@@ -212,6 +212,21 @@ END$$
 
 DELIMITER ;
 
+-- ============================================
+-- PROCÉDURES STOCKÉES - GetAllUsers
+-- ============================================
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS GetAllUsers$$
+
+CREATE PROCEDURE GetAllUsers()
+BEGIN
+    SELECT username,solde from user order by solde desc;
+END$$
+
+DELIMITER ;
+
 -- Insertion de fake user pour le classement 
 INSERT INTO user (mail, password, username, solde) VALUES
 ('ace_king@blackjack.com', 'hashed_pwd_1', 'AceHigh', 5400.00),

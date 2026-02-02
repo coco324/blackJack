@@ -56,6 +56,7 @@ async function loadStats() {
       <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="router.push('/login')">Se connecter</button>
       <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="router.push('/registration')">S'inscrire</button>
     </div>
+    <button v-if="UserStore().isLogin" class="absolute top-2 left-0 p-4 rounded-lg bg-red-500" @click="router.push('/admin')"> page admin </button>
     <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <div class="absolute top-6 right-6 z-50 group">
         <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
@@ -71,6 +72,7 @@ async function loadStats() {
           </p>
         </div>
         <button class="rounded-lg text-white hover:text-gray-400" @click="Logout()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
+        
 
     </div>
     </div>

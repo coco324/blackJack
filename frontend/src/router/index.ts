@@ -5,6 +5,7 @@ import registration from '../views/registration.vue';
 import login from '../views/login.vue';
 import rules from '../views/rules.vue';
 import Leaderboard from '../views/leaderboard.vue';
+import Admin from '../views/admin.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,7 +32,11 @@ const router = createRouter({
     },
     {
       path: '/leaderboard',
-      component: Leaderboard
+      component: Leaderboard,
+    },
+    {
+      path: '/admin',
+      component: Admin
     }
   ],
 })
