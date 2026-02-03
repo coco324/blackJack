@@ -4,6 +4,7 @@ import session from "express-session";
 import connection from "./config/bd_cnx.js";
 import { CreateUser,Login,Logout,CheckAuth,GetUserStats, GetLeaderboard ,GetAllUsers } from "./controller/user.controller.js";
 import { CreateSession, SaveGame, EndSession, GetUserSessions } from "./controller/game.controller.js";
+import { InsertExam, GetAllExams } from "./controller/exam.controller.js";
 
 
 dotenv.config();
@@ -49,6 +50,10 @@ app.post("/CreateSession", CreateSession);
 app.post("/SaveGame", SaveGame);
 app.post("/EndSession", EndSession);
 app.get("/GetUserSessions", GetUserSessions);
+
+// exam routes
+app.post("/InsertExam", InsertExam);
+app.get("/GetAllExams", GetAllExams);
 
 // --- Démarrage du serveur (À LA FIN) ---
 app.listen(PORT, () => {

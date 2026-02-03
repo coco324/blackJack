@@ -6,6 +6,8 @@ import login from '../views/login.vue';
 import rules from '../views/rules.vue';
 import Leaderboard from '../views/leaderboard.vue';
 import Admin from '../views/admin.vue';
+import examInsert from '../views/examInsert.vue';
+import examList from '../views/examList.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,6 +39,14 @@ const router = createRouter({
     {
       path: '/admin',
       component: Admin
+    },
+    {
+      path: '/examInsert',
+      component: examInsert
+    },
+    {
+      path: '/examList',
+      component: examList
     }
   ],
 })

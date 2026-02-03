@@ -56,7 +56,11 @@ async function loadStats() {
       <button class="bg-gray-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-gray-700 active:bg-gray-600" @click="router.push('/login')">Se connecter</button>
       <button class="bg-green-800 px-4 py-1 rounded-lg text-white font-bold hover:bg-green-700 active:bg-green-600"@click="router.push('/registration')">S'inscrire</button>
     </div>
-    <button v-if="UserStore().isLogin && UserStore().user.getIsAdmin()" class="absolute top-2 left-0 p-4 rounded-lg bg-red-500" @click="router.push('/admin')"> page admin </button>
+    <div v-if="UserStore().isLogin" class="absolute top-2 left-0 flex gap-2 p-2">
+      <button v-if="UserStore().user.getIsAdmin()" class="p-4 rounded-lg bg-red-500 text-white" @click="router.push('/admin')">page admin</button>
+      <button class="p-4 rounded-lg bg-gray-700 text-white" @click="router.push('/examInsert')">Ajouter</button>
+      <button class="p-4 rounded-lg bg-gray-700 text-white" @click="router.push('/examList')">Voir liste</button>
+    </div>
     <div v-if="UserStore().isLogin" class="absolute top-6 right-6 flex gap-4 p-2 ">
       <div class="absolute top-6 right-6 z-50 group">
         <div class="p-1 rounded-2xl bg-[#0a263d]/90 backdrop-blur-md border-2 border-[#806210] shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-1">
