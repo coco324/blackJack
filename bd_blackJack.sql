@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS Hand;
 DROP TABLE IF EXISTS Game;
 DROP TABLE IF EXISTS Session;
 DROP TABLE IF EXISTS user;
+drop table if exists Evaluation;
 
 -- Table User
 CREATE TABLE user (
@@ -16,6 +17,22 @@ CREATE TABLE user (
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     isAdmin boolean DEFAULT false
 ) ENGINE=InnoDB;
+
+create TABLE Evaluation(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+	dateEnvoie TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	clarte VARCHAR(50) not null,
+	frequence VARCHAR(50) not null,
+    note int not null,
+    commentaire VARCHAR(255) not null,
+    statut ENUM('en_attente', 'validee','refusee') DEFAULT 'en_attente',
+    justification VARCHAR(255) default null,
+    FOREIGN KEY (id_user) REFERENCES user(id)
+) ENGINE=InnoDB;
+
+
+
 
 -- Table Session
 CREATE TABLE Session (

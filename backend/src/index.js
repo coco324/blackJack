@@ -4,14 +4,15 @@ import session from "express-session";
 import connection from "./config/bd_cnx.js";
 import { CreateUser,Login,Logout,CheckAuth,GetUserStats, GetLeaderboard ,GetAllUsers } from "./controller/user.controller.js";
 import { CreateSession, SaveGame, EndSession, GetUserSessions } from "./controller/game.controller.js";
+import { CreateEvaluation, GetEvaluations, UpdateEvaluationStatus } from "./controller/evaluation.controller.js";
 
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000; // Il est souvent bon de définir le port dans une variable
+const PORT = 3000; 
 
-// --- Middleware ---
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -32,6 +33,9 @@ app.post("/Logout", Logout);
 app.get("/GetUserStats", GetUserStats);
 app.get("/GetLeaderboard",GetLeaderboard);
 app.get("/GetAllUsers",GetAllUsers)
+app.post("/CreateEvaluation", CreateEvaluation);
+app.get("/GetEvaluations", GetEvaluations);
+app.post("/UpdateEvaluationStatus", UpdateEvaluationStatus);
 app.get("/", async (req, res) => {
   try {
     const [rows] = await connection.execute("SELECT * FROM User");
