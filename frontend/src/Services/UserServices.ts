@@ -107,5 +107,33 @@ export default class UserServices {
             return { error: error.message };
         }
     }
-    
+    static async DeleteUser(userId: number) {
+        try {
+            const response = await fetch(`/api/DeleteUser`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            });
+            return await response.json();
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    }
+
+    static async UpdateUserSolde(userId: number, newSolde: number) {
+        try {
+            const response = await fetch(`/api/UpdateUserSolde`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, newSolde }),
+            });
+            return await response.json();
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    }    
 }

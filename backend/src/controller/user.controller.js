@@ -196,3 +196,41 @@ export async function GetAllUsers(req, res) {
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 }
+
+export async function DeleteUser(req, res) {
+  const { userId } = req.body;
+  
+  if (!userId) {
+    return res.status(400).json({ error: 'ID utilisateur manquant' });
+  }
+  
+  try {
+    await connection.execute(
+      'DELETE FROM User WHERE id = ?',
+      [userId]
+    );
+    return res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}
+
+export async function UpdateUserSolde(req, res) {
+  const { userId, newSolde } = req.body;
+  
+  if (!userId || newSolde === undefined) {
+    return res.status(400).json({ error: 'Paramètres manquants' });
+  }
+  
+  try {
+    await connection.execute(
+      'UPDATE User SET solde = ? WHERE id = ?',
+      [newSolde, userId]
+    );
+    return res.json({ message: 'Solde mis à jour avec succès' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}

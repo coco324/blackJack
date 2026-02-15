@@ -223,7 +223,7 @@ DROP PROCEDURE IF EXISTS GetAllUsers$$
 
 CREATE PROCEDURE GetAllUsers()
 BEGIN
-    SELECT username,solde,mail,id from user order by id ;
+    SELECT username, solde, mail, id, isAdmin FROM user ORDER BY id;
 END$$
 
 DELIMITER ;
