@@ -18,14 +18,6 @@ onMounted(async () => {
 });
 
 
-// 2. Fonction de Login
-async function fakeLogin() {
-  const res = await UserServices.Login('a@a.com', 'aA1&zz');
-  // console.log("Réponse Login:", res);
-  await UserStore().initUser();
-
-  await loadStats();
-}
 async function Logout() {
   UserServices.Logout();
   UserStore().reset();

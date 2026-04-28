@@ -257,6 +257,10 @@ async function endSession() {
   // vérifie que sessionId existe ET n'est pas 0
   if (sessionId.value && sessionId.value !== 0) {
     await GameServices.EndSession(sessionId.value, currentSolde.value)
+    const userStore = UserStore()
+    if (userStore.user) {
+      userStore.user.setSolde(currentSolde.value)
+    }
     }
 
 

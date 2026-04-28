@@ -3,6 +3,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/CreateUser`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -17,6 +18,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/Login`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -31,6 +33,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/Logout`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json', 
                 },
@@ -45,6 +48,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/checkAuth`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -59,6 +63,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/GetUserStats`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -78,6 +83,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/GetLeaderboard`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -95,6 +101,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/GetAllUsers`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -111,6 +118,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/DeleteUser`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -126,6 +134,7 @@ export default class UserServices {
         try {
             const response = await fetch(`/api/UpdateUserSolde`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
