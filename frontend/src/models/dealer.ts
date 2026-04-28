@@ -11,7 +11,7 @@ export class dealer{
     }
 
     public addCarte(carte: card, faceUp: boolean = true): void {
-        carte.isFaceUp = faceUp;
+        carte.SetIsFaceUp(faceUp);
         this.main.push(carte);
     }
 
@@ -19,7 +19,7 @@ export class dealer{
         let score = 0;
         let aceCount = 0;
         for (const c of this.main) {
-            if (!c.isFaceUp) continue;
+            if (!c.getIsFaceUp()) continue;
             score += c.getValue();
             if (c.getNom() === 'A') {
                 aceCount++;
