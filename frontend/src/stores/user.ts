@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import { ref, type Ref } from "vue";
+import { ref, type Ref, computed } from "vue";
 import { user as UserType } from '../models/user';
 import UserServices from '../Services/UserServices';
 
@@ -7,6 +7,7 @@ export const UserStore = defineStore('user', () => {
 
   const user: Ref<UserType | null> = ref(null);
   const isLogin: Ref<boolean> = ref(false);
+  const isAdmin = computed(() => !!user.value && !!(user.value as any).isAdmin);
 
   async function initUser(){
     const res = await UserServices.CheckAuth()
@@ -27,6 +28,7 @@ export const UserStore = defineStore('user', () => {
   return {
     user,
     isLogin,
+    isAdmin,
     initUser,
     reset
   };

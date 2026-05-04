@@ -5,12 +5,22 @@ import LeaderboardTable from '../components/LeaderboardTable.vue'
 import { useRouter } from 'vue-router'
 import { ref,onMounted } from 'vue'
 import UserServices from '../Services/UserServices'
+import { UserStore } from '../stores/user'
 
 const router = useRouter()
 const leaders = ref([]);
 
 onMounted(() => {
-    GetLeaderboard();
+	if(UserStore().isLogin)
+	{
+		GetLeaderboard();
+	}
+	else
+	{
+		router.push("/")
+	}
+    
+    
 });
 
 async function GetLeaderboard() {

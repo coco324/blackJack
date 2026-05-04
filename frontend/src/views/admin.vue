@@ -3,14 +3,23 @@ import backgroundImage from '../assets/ImageBackgoundHome.png'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import UserServices from '../Services/UserServices'
+import { UserStore } from '../stores/user'
 
 const router = useRouter()
 const users = ref([])
 const editingId = ref(null)
 const newSolde = ref(0)
 
+
 onMounted(async () => {
-    await loadUsers()
+    await UserStore().initUser();
+    if (UserStore().isLogin && UserStore().isAdmin) {
+        await loadUsers()
+    }
+    else{
+        router.push('/')
+    }
+    
 })
 
 async function loadUsers() {
