@@ -23,7 +23,7 @@ onMounted(async () => {
 })
 
 async function loadUsers() {
-    const res = await UserServices.GetAllUsers()
+    const res = await UserServices.GetAllUsers(UserStore().user.id)
     if (res && !res.error) {
         users.value = res
     }

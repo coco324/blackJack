@@ -185,9 +185,16 @@ export async function GetLeaderboard(req, res) {
 }
 
 export async function GetAllUsers(req, res) {
+  const userId = Number(req.query.userId ?? req.session?.user?.id);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({ error: 'ID utilisateur manquant ou invalide' });
+  }
+
   try {
     const [result] = await connection.execute(
-      'CALL GetAllUsers()'
+      'CALL GetAllUsers(?)',
+      [userId]
     );
     const Users = result[0];
     return res.json(Users);

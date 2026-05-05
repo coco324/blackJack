@@ -97,9 +97,9 @@ export default class UserServices {
         }
     }
 
-    static async GetAllUsers() {
+    static async GetAllUsers(userId: number) {
         try {
-            const response = await fetch(`/api/GetAllUsers`, {
+            const response = await fetch(`/api/GetAllUsers?userId=${userId}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
