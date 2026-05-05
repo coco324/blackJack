@@ -123,7 +123,7 @@ export async function CheckAuth(req, res) {
     try {
       // Récupérer le solde actuel depuis la base de données
       const [rows] = await connection.execute(
-        'SELECT solde FROM User WHERE id = ?',
+        'SELECT solde FROM user WHERE id = ?',
         [req.session.user.id]
       );
       
@@ -213,7 +213,7 @@ export async function DeleteUser(req, res) {
   
   try {
     await connection.execute(
-      'DELETE FROM User WHERE id = ?',
+      'DELETE FROM user WHERE id = ?',
       [userId]
     );
     return res.json({ message: 'Utilisateur supprimé avec succès' });
@@ -232,7 +232,7 @@ export async function UpdateUserSolde(req, res) {
   
   try {
     await connection.execute(
-      'UPDATE User SET solde = ? WHERE id = ?',
+      'UPDATE user SET solde = ? WHERE id = ?',
       [newSolde, userId]
     );
     return res.json({ message: 'Solde mis à jour avec succès' });
